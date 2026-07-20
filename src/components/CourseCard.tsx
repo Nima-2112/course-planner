@@ -2,9 +2,7 @@ import "../styles/Card.css";
 
 type Props = {
   course: any;
-
   isAdded: boolean;
-
   addCourse: (id: number) => void;
 };
 
