@@ -10,11 +10,11 @@ import AddProduct from "./pages/AddProduct";
 import Favorites from "./pages/Favorites";
 import HomeLoader from "./pages/HomeLoader";
 
-import { products } from "./data/Products";
+import { products } from "./data/products";
 import { useFavorites } from "./hooks/useFavorites";
 
 function App() {
-  const [productList, setProductList] = useState(Products);
+  const [productList, setProductList] = useState(products);
 
   const [cart, setCart] = useState<{ id: number; quantity: number }[]>([]);
 
