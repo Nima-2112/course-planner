@@ -167,7 +167,7 @@
 
   &::before,
   &::after {
-    content: '';
+    content: "";
     position: absolute;
     top: -4.5px;
     border: 5px solid transparent;
@@ -181,4 +181,30 @@
     right: 0;
     border-right-color: var(--border);
   }
+}
+/**/
+.favorite-btn {
+  position: absolute;
+
+  top: 15px;
+
+  right: 15px;
+
+  border: none;
+
+  background: none;
+
+  font-size: 30px;
+
+  cursor: pointer;
+
+  transition: 0.3s;
+}
+
+.favorite-btn:hover {
+  transform: scale(1.2);
+}
+/*kart*/
+.product-card {
+  position: relative;
 }
