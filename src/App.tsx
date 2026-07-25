@@ -2,29 +2,77 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { useState } from "react";
 
 import Navbar from "./components/Navbar";
-import Home from "./pages/Home";
-import Catalog from "./pages/Catalog";
-import Planner from "./pages/Planner";
-import AddCourse from "./pages/AddCourse";
 
-import { courses } from "./data/courses";
+import Home from "./pages/Home";
+import Products from "./pages/Products";
+import Cart from "./pages/Cart";
+import AddProduct from "./pages/AddProduct";
+import Favorites from "./pages/Favorites";
+import HomeLoader from "./pages/HomeLoader";
+
+import { products } from "./data/Products";
+import { useFavorites } from "./hooks/useFavorites";
 
 function App() {
-  const [courseList, setCourseList] = useState(courses);
-  const addNewCourse = (newCourse: any) => {
-    setCourseList([...courseList, newCourse]);
-  };
+  const [productList, setProductList] = useState(Products);
 
-  const [planner, setPlanner] = useState<number[]>([]);
+  const [cart, setCart] = useState<{ id: number; quantity: number }[]>([]);
 
-  const addCourse = (id: number) => {
-    if (!planner.includes(id)) {
-      setPlanner([...planner, id]);
+  // Favorite Hook
+  const { favorites, toggleFavorite } = useFavorites();
+
+  // ---------------- CART ----------------
+
+  const addToCart = (id: number) => {
+    const exist = cart.find((item) => item.id === id);
+
+    if (exist) {
+      setCart(
+        cart.map((item) =>
+          item.id === id ? { ...item, quantity: item.quantity + 1 } : item,
+        ),
+      );
+    } else {
+      setCart([
+        ...cart,
+        {
+          id,
+          quantity: 1,
+        },
+      ]);
     }
   };
 
-  const removeCourse = (id: number) => {
-    setPlanner(planner.filter((courseId) => courseId !== id));
+  const increaseQuantity = (id: number) => {
+    setCart(
+      cart.map((item) =>
+        item.id === id ? { ...item, quantity: item.quantity + 1 } : item,
+      ),
+    );
+  };
+
+  const decreaseQuantity = (id: number) => {
+    setCart(
+      cart
+        .map((item) =>
+          item.id === id ? { ...item, quantity: item.quantity - 1 } : item,
+        )
+        .filter((item) => item.quantity > 0),
+    );
+  };
+
+  const removeFromCart = (id: number) => {
+    setCart(cart.filter((item) => item.id !== id));
+  };
+
+  const clearCart = () => {
+    setCart([]);
+  };
+
+  // ---------------- PRODUCTS ----------------
+
+  const addNewProduct = (newProduct: any) => {
+    setProductList([...productList, newProduct]);
   };
 
   return (
@@ -32,35 +80,52 @@ function App() {
       <Navbar />
 
       <Routes>
+        <Route path="/" element={<Home />} />
+
+        <Route path="/home-loading" element={<HomeLoader />} />
+
         <Route
-          path="/"
-          element={<Home planner={planner} courses={courseList} />}
-        />
-        <Route
-          path="/catalog"
+          path="/products"
           element={
-            <Catalog
-              courses={courseList}
-              planner={planner}
-              addCourse={addCourse}
-            />
-          }
-        />
-        <Route
-          path="/planner"
-          element={
-            <Planner
-              courses={courseList}
-              planner={planner}
-              removeCourse={removeCourse}
+            <Products
+              products={productList}
+              cart={cart}
+              addToCart={addToCart}
+              favorites={favorites}
+              toggleFavorite={toggleFavorite}
             />
           }
         />
 
         <Route
-          path="/add-course"
+          path="/cart"
           element={
-            <AddCourse courses={courseList} addNewCourse={addNewCourse} />
+            <Cart
+              products={productList}
+              cart={cart}
+              increaseQuantity={increaseQuantity}
+              decreaseQuantity={decreaseQuantity}
+              removeFromCart={removeFromCart}
+              clearCart={clearCart}
+            />
+          }
+        />
+
+        <Route
+          path="/favorites"
+          element={
+            <Favorites
+              products={productList}
+              favorites={favorites}
+              toggleFavorite={toggleFavorite}
+            />
+          }
+        />
+
+        <Route
+          path="/add-product"
+          element={
+            <AddProduct products={productList} addNewProduct={addNewProduct} />
           }
         />
       </Routes>

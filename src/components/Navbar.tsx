@@ -4,28 +4,22 @@ import { Link } from "react-router-dom";
 function Navbar() {
   return (
     <nav>
-      <ul
-        style={{
-          display: "flex",
-          gap: "20px",
-          listStyle: "none",
-          padding: "20px",
-        }}
-      >
+      <ul>
         <li>
-          <Link to="/">Home</Link>
+          <Link to="/home-loading">Home</Link>
+          <Link to="Favorites ({favorites.length})">Favorites</Link>
         </li>
 
         <li>
-          <Link to="/catalog">Course Catalog</Link>
+          <Link to="/products">Products</Link>
         </li>
 
         <li>
-          <Link to="/planner">My Planner</Link>
+          <Link to="/cart">Shopping Cart</Link>
         </li>
 
         <li>
-          <Link to="/add-course">Add Course</Link>
+          <Link to="/add-product">Add Product</Link>
         </li>
       </ul>
     </nav>

@@ -1,13 +1,61 @@
-export interface product {
-  id: number;
+export const products = [
+  {
+    id: 1,
+    code: "P101",
+    name: "Laptop",
+    category: "Electronics",
+    price: 1200,
+    image: "https://picsum.photos/300?random=1",
+    description: "High-performance laptop for work and study.",
+  },
 
-  name: string;
+  {
+    id: 2,
+    code: "P102",
+    name: "Smartphone",
+    category: "Electronics",
+    price: 800,
+    image: "https://picsum.photos/300?random=2",
+    description: "Latest generation smartphone.",
+  },
 
-  category: string;
+  {
+    id: 3,
+    code: "P103",
+    name: "Running Shoes",
+    category: "Sports",
+    price: 150,
+    image: "https://picsum.photos/300?random=3",
+    description: "Comfortable shoes for running.",
+  },
 
-  price: number;
+  {
+    id: 4,
+    code: "P104",
+    name: "Programming Book",
+    category: "Books",
+    price: 45,
+    image: "/asb.webp",
+    description: "Learn modern web development.",
+  },
 
-  image: string;
+  {
+    id: 5,
+    code: "P105",
+    name: "T-Shirt",
+    category: "Clothing",
+    price: 30,
+    image: "/asb.webp",
+    description: "Comfortable cotton T-shirt.",
+  },
 
-  description: string;
-}
+  {
+    id: 6,
+    code: "P106",
+    name: "Coffee Maker",
+    category: "Home",
+    price: 95,
+    image: "/asb.webp",
+    description: "Automatic coffee machine.",
+  },
+];
