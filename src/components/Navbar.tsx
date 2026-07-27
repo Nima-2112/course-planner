@@ -1,28 +1,28 @@
 import "../styles/Navbar.css";
 import { Link } from "react-router-dom";
 import { useContext } from "react";
+
+import ThemeButton from "./ThemeButton";
 import { FavoriteContext } from "../context/FavoriteContext";
+
 function Navbar() {
   const { favorites } = useContext(FavoriteContext);
+
   return (
-    <nav>
-      <ul>
-        <li>
-          <Link to="/home-loading">Home</Link>
-          <Link to="Favorites ({favorites.length})">Favorites</Link>
-        </li>
+    <nav className="navbar">
+      <div className="nav-links">
+        <Link to="/home-loading">Home</Link>
 
-        <li>
-          <Link to="/products">Products</Link>
-        </li>
-        <li>
-          <Link to="/cart">Shopping Cart</Link>
-        </li>
+        <Link to="/favorites">Favorites ({favorites.length})</Link>
 
-        <li>
-          <Link to="/add-product">Add Product</Link>
-        </li>
-      </ul>
+        <Link to="/products">Products</Link>
+
+        <Link to="/cart">Shopping Cart</Link>
+
+        <Link to="/add-product">Add Product</Link>
+      </div>
+
+      <ThemeButton />
     </nav>
   );
 }
