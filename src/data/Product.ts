@@ -1,4 +1,6 @@
-export const products = [
+import type { Product } from "../interfaces/Product";
+
+export const products: Product[] = [
   {
     id: 1,
     code: "P101",
@@ -8,7 +10,6 @@ export const products = [
     image: "https://picsum.photos/300?random=1",
     description: "High-performance laptop for work and study.",
   },
-
   {
     id: 2,
     code: "P102",
@@ -18,7 +19,6 @@ export const products = [
     image: "https://picsum.photos/300?random=2",
     description: "Latest generation smartphone.",
   },
-
   {
     id: 3,
     code: "P103",
@@ -28,7 +28,6 @@ export const products = [
     image: "https://picsum.photos/300?random=3",
     description: "Comfortable shoes for running.",
   },
-
   {
     id: 4,
     code: "P104",
@@ -38,7 +37,6 @@ export const products = [
     image: "/asb.webp",
     description: "Learn modern web development.",
   },
-
   {
     id: 5,
     code: "P105",
@@ -48,7 +46,6 @@ export const products = [
     image: "/asb.webp",
     description: "Comfortable cotton T-shirt.",
   },
-
   {
     id: 6,
     code: "P106",

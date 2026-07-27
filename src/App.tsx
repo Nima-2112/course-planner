@@ -13,13 +13,15 @@ import HomeLoader from "./pages/HomeLoader";
 import { products } from "./data/products";
 import { useFavorites } from "./hooks/useFavorites";
 
+import type { Product } from "./interfaces/Product";
+
 function App() {
-  const [productList, setProductList] = useState(products);
+  const [productList, setProductList] = useState<Product[]>(products);
 
   const [cart, setCart] = useState<{ id: number; quantity: number }[]>([]);
 
   // Favorite Hook
-  const { favorites, toggleFavorite } = useFavorites();
+  //const { favorites, toggleFavorite } = useFavorites();
 
   // ---------------- CART ----------------
 
@@ -71,7 +73,7 @@ function App() {
 
   // ---------------- PRODUCTS ----------------
 
-  const addNewProduct = (newProduct: any) => {
+  const addNewProduct = (newProduct: Product) => {
     setProductList([...productList, newProduct]);
   };
 
@@ -91,8 +93,6 @@ function App() {
               products={productList}
               cart={cart}
               addToCart={addToCart}
-              favorites={favorites}
-              toggleFavorite={toggleFavorite}
             />
           }
         />
@@ -113,13 +113,7 @@ function App() {
 
         <Route
           path="/favorites"
-          element={
-            <Favorites
-              products={productList}
-              favorites={favorites}
-              toggleFavorite={toggleFavorite}
-            />
-          }
+          element={<Favorites products={productList} />}
         />
 
         <Route

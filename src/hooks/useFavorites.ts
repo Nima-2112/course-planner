@@ -19,6 +19,14 @@ export function useFavorites() {
     );
   }, [favorites]);
 
+  useEffect(() => {
+    localStorage.setItem(
+      "favorites",
+
+      JSON.stringify(favorites),
+    );
+  }, [favorites]);
+
   const toggleFavorite = (id: number) => {
     if (favorites.includes(id)) {
       setFavorites(favorites.filter((item) => item !== id));

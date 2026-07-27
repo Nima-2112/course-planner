@@ -1,10 +1,13 @@
 import "../styles/Layout.css";
+import { useContext } from "react";
+import { FavoriteContext } from "../context/FavoriteContext";
 
 function Cart({
   products,
   cart,
   increaseQuantity,
   decreaseQuantity,
+  removeFromCart,
   clearCart,
 }: any) {
   if (cart.length === 0) {
@@ -33,6 +36,8 @@ function Cart({
 
   const total = subtotal + tax + shipping - discount;
 
+  const { favorites, toggleFavorite } = useContext(FavoriteContext);
+
   const totalQuantity = cart.reduce(
     (total: number, item: any) => total + item.quantity,
     0,
@@ -50,7 +55,12 @@ function Cart({
 
           <div className="quantity-box">
             <button onClick={() => decreaseQuantity(product.id)}>-</button>
-
+            <button
+              className="remove-btn"
+              onClick={() => removeFromCart(product.id)}
+            >
+              Remove
+            </button>
             <span>{product.quantity}</span>
 
             <button onClick={() => increaseQuantity(product.id)}>+</button>

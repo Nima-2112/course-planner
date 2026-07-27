@@ -1,26 +1,27 @@
-import { useState } from "react";
+import { useState, useContext } from "react";
 import "../styles/Layout.css";
 
+import { FavoriteContext } from "../context/FavoriteContext";
 import ProductCard from "../components/ProductCard";
+import type { Product } from "../interfaces/Product";
 
 type ProductsProps = {
-  products: any[];
+  products: Product[];
   cart: { id: number; quantity: number }[];
   addToCart: (id: number) => void;
-
-  favorites: number[];
-  toggleFavorite: (id: number) => void;
 };
 
-function Products({
-  products,
-  cart,
-  addToCart,
-  favorites,
-  toggleFavorite,
-}: ProductsProps) {
+function Products({ products, cart, addToCart }: ProductsProps) {
+  // Favorite Context
+  const { favorites, toggleFavorite } = useContext(FavoriteContext);
+
+  // Search State
   const [search, setSearch] = useState("");
+
+  // Filter State
   const [category, setCategory] = useState("All");
+
+  // Sort State
   const [sortBy, setSortBy] = useState("default");
 
   // Search + Filter
@@ -78,21 +79,21 @@ function Products({
         >
           <option value="All">All</option>
           <option value="Electronics">Electronics</option>
-          <option value="Clothing">Clothing</option>
           <option value="Books">Books</option>
           <option value="Sports">Sports</option>
+          <option value="Clothing">Clothing</option>
+          <option value="Home">Home</option>
         </select>
-
         <select
           className="sort-box"
           value={sortBy}
           onChange={(e) => setSortBy(e.target.value)}
         >
           <option value="default">Default</option>
-          <option value="low">Price: Low to High</option>
-          <option value="high">Price: High to Low</option>
-          <option value="az">Name: A-Z</option>
-          <option value="za">Name: Z-A</option>
+          <option value="low">Price: Low → High</option>
+          <option value="high">Price: High → Low</option>
+          <option value="az">Name: A → Z</option>
+          <option value="za">Name: Z → A</option>
         </select>
       </div>
 
