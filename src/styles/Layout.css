@@ -69,6 +69,12 @@ body {
   gap: 15px;
 }
 
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 26px;
+}
+
 .product-form input,
 .product-form select,
 .product-form textarea {
@@ -149,4 +155,11 @@ body {
 .sort-box:focus {
   outline: none;
   border-color: royalblue;
+}
+
+.page button {
+  padding: 12px 20px;
+  background: #2563eb;
+  color: white;
+  border: none;
 }
