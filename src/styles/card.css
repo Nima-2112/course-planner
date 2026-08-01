@@ -1,59 +1,41 @@
+/* ===========================
+   Products Grid
+=========================== */
+
+.products-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 20px;
+  align-items: stretch;
+}
+
+/* ===========================
+   Product Card
+=========================== */
+
 .product-card {
-  background: white;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+
+  background: #ffffff;
+  border: 1px solid #ddd;
   border-radius: 12px;
-  overflow: hidden;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+
   padding: 20px;
-  transition: 0.3s;
-}
 
-.product-card:hover {
-  transform: translateY(-6px);
-}
-
-.product-card img {
-  width: 100%;
-  height: 220px;
-  object-fit: cover;
-  border-radius: 8px;
-}
-
-.product-card h2 {
-  margin: 15px 0;
-  color: #1e3a8a;
-}
-
-.product-card p {
-  margin: 8px 0;
-}
-
-.product-card button {
-  width: 100%;
-  margin-top: 15px;
-  padding: 12px;
-  border: none;
-  background: #2563eb;
-  color: white;
-  border-radius: 8px;
-  cursor: pointer;
-}
-
-.product-card button:hover {
-  background: #1d4ed8;
-}
-
-/*bakhsh haft*/
-.product-card {
-  background: white;
-  border-radius: 12px;
-  padding: 20px;
   box-shadow: 0 5px 12px rgba(0, 0, 0, 0.12);
-  transition: 0.3s;
+
+  transition: all 0.3s ease;
 }
 
 .product-card:hover {
   transform: translateY(-8px);
 }
+
+/* ===========================
+   Product Image
+=========================== */
 
 .product-card img {
   width: 100%;
@@ -62,19 +44,55 @@
   border-radius: 10px;
 }
 
+/* ===========================
+   Product Title
+=========================== */
+
 .product-card h2 {
+  margin: 15px 0 10px;
   color: #2563eb;
+  font-size: 22px;
 }
+
+/* ===========================
+   Product Description
+=========================== */
+
+.product-card p {
+  margin: 6px 0;
+  line-height: 1.6;
+}
+
+/* این قسمت باعث می‌شود متن فضای لازم را بگیرد
+   و دکمه همیشه پایین کارت قرار بگیرد */
+
+.product-card .product-info {
+  flex: 1;
+}
+
+/* ===========================
+   Add To Cart Button
+=========================== */
 
 .product-card button {
   width: 100%;
+  margin-top: auto;
+
   padding: 12px;
+
   border: none;
+
   border-radius: 8px;
-  cursor: pointer;
+
   background: #2563eb;
+
   color: white;
-  margin-top: 15px;
+
+  font-size: 16px;
+
+  cursor: pointer;
+
+  transition: 0.3s;
 }
 
 .product-card button:hover {
@@ -83,12 +101,17 @@
 
 .product-card button:disabled {
   background: gray;
+  cursor: not-allowed;
 }
-/*marhale4*/
+
+/* ===========================
+   Quantity
+=========================== */
+
 .quantity-box {
   display: flex;
-
   align-items: center;
+  justify-content: center;
 
   gap: 15px;
 
@@ -97,24 +120,58 @@
 
 .quantity-box button {
   width: 35px;
-
   height: 35px;
 
-  font-size: 20px;
-
-  cursor: pointer;
+  padding: 0;
 
   border: none;
+
+  border-radius: 6px;
 
   background: royalblue;
 
   color: white;
 
-  border-radius: 6px;
+  font-size: 20px;
+
+  cursor: pointer;
 }
 
 .quantity-box span {
   font-size: 20px;
-
   font-weight: bold;
+}
+
+/* ===========================
+   Favorite Button
+=========================== */
+
+.favorite-btn {
+  position: absolute;
+
+  top: 15px;
+
+  right: 15px;
+
+  width: 42px;
+
+  height: 42px;
+
+  border: none;
+
+  border-radius: 50%;
+
+  background: white;
+
+  font-size: 24px;
+
+  cursor: pointer;
+
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+
+  transition: 0.3s;
+}
+
+.favorite-btn:hover {
+  transform: scale(1.15);
 }

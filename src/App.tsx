@@ -1,3 +1,5 @@
+import { useContext } from "react";
+import { ThemeContext } from "./context/ThemeContext";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { useState } from "react";
 
@@ -14,6 +16,8 @@ import { products } from "./data/products";
 import { useFavorites } from "./hooks/useFavorites";
 
 import type { Product } from "./interfaces/Product";
+
+import "./styles/theme.css";
 
 function App() {
   const [productList, setProductList] = useState<Product[]>(products);

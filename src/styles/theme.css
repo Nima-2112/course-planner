@@ -1,0 +1,19 @@
+.light {
+  background: #ffffff;
+
+  color: #222;
+
+  min-height: 100vh;
+
+  transition: 0.4s;
+}
+
+.dark {
+  background: #1b1b1b;
+
+  color: white;
+
+  min-height: 100vh;
+
+  transition: 0.4s;
+}

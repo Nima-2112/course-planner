@@ -1,30 +1,32 @@
 import { useState, useContext } from "react";
+
 import "../styles/Layout.css";
 
 import { FavoriteContext } from "../context/FavoriteContext";
+
 import ProductCard from "../components/ProductCard";
+
 import type { Product } from "../interfaces/Product";
 
 type ProductsProps = {
   products: Product[];
+
   cart: { id: number; quantity: number }[];
+
   addToCart: (id: number) => void;
 };
 
 function Products({ products, cart, addToCart }: ProductsProps) {
-  // Favorite Context
   const { favorites, toggleFavorite } = useContext(FavoriteContext);
 
-  // Search State
   const [search, setSearch] = useState("");
 
-  // Filter State
   const [category, setCategory] = useState("All");
 
-  // Sort State
   const [sortBy, setSortBy] = useState("default");
 
   // Search + Filter
+
   const filteredProducts = products.filter((product) => {
     const matchSearch = product.name
       .toLowerCase()
@@ -35,24 +37,29 @@ function Products({ products, cart, addToCart }: ProductsProps) {
     return matchSearch && matchCategory;
   });
 
-  // Sort
+  // Sorting
+
   const sortedProducts = [...filteredProducts];
 
   switch (sortBy) {
     case "low":
       sortedProducts.sort((a, b) => a.price - b.price);
+
       break;
 
     case "high":
       sortedProducts.sort((a, b) => b.price - a.price);
+
       break;
 
     case "az":
       sortedProducts.sort((a, b) => a.name.localeCompare(b.name));
+
       break;
 
     case "za":
       sortedProducts.sort((a, b) => b.name.localeCompare(a.name));
+
       break;
 
     default:
@@ -78,22 +85,32 @@ function Products({ products, cart, addToCart }: ProductsProps) {
           onChange={(e) => setCategory(e.target.value)}
         >
           <option value="All">All</option>
+
           <option value="Electronics">Electronics</option>
+
           <option value="Books">Books</option>
+
           <option value="Sports">Sports</option>
+
           <option value="Clothing">Clothing</option>
+
           <option value="Home">Home</option>
         </select>
+
         <select
           className="sort-box"
           value={sortBy}
           onChange={(e) => setSortBy(e.target.value)}
         >
           <option value="default">Default</option>
-          <option value="low">Price: Low → High</option>
-          <option value="high">Price: High → Low</option>
-          <option value="az">Name: A → Z</option>
-          <option value="za">Name: Z → A</option>
+
+          <option value="low">Price Low → High</option>
+
+          <option value="high">Price High → Low</option>
+
+          <option value="az">Name A → Z</option>
+
+          <option value="za">Name Z → A</option>
         </select>
       </div>
 
