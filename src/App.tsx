@@ -1,31 +1,31 @@
-import { useContext } from "react";
-import { ThemeContext } from "./context/ThemeContext";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { useState } from "react";
+import { useContext, useState } from "react";
 
 import Navbar from "./components/Navbar";
 
 import Home from "./pages/Home";
 import Products from "./pages/Products";
 import Cart from "./pages/Cart";
-import AddProduct from "./pages/AddProduct";
 import Favorites from "./pages/Favorites";
+import AddProduct from "./pages/AddProduct";
 import HomeLoader from "./pages/HomeLoader";
 
 import { products } from "./data/products";
-import { useFavorites } from "./hooks/useFavorites";
-
 import type { Product } from "./interfaces/Product";
+
+import { ThemeContext } from "./context/ThemeContext";
 
 import "./styles/theme.css";
 
 function App() {
+  // Theme Context
+  const { darkMode } = useContext(ThemeContext);
+
+  // Products
   const [productList, setProductList] = useState<Product[]>(products);
 
+  // Cart
   const [cart, setCart] = useState<{ id: number; quantity: number }[]>([]);
-
-  // Favorite Hook
-  //const { favorites, toggleFavorite } = useFavorites();
 
   // ---------------- CART ----------------
 
@@ -82,52 +82,57 @@ function App() {
   };
 
   return (
-    <BrowserRouter>
-      <Navbar />
+    <div className={darkMode ? "dark" : "light"}>
+      <BrowserRouter>
+        <Navbar />
 
-      <Routes>
-        <Route path="/" element={<Home />} />
+        <Routes>
+          <Route path="/" element={<Home />} />
 
-        <Route path="/home-loading" element={<HomeLoader />} />
+          <Route path="/home-loading" element={<HomeLoader />} />
 
-        <Route
-          path="/products"
-          element={
-            <Products
-              products={productList}
-              cart={cart}
-              addToCart={addToCart}
-            />
-          }
-        />
+          <Route
+            path="/products"
+            element={
+              <Products
+                products={productList}
+                cart={cart}
+                addToCart={addToCart}
+              />
+            }
+          />
 
-        <Route
-          path="/cart"
-          element={
-            <Cart
-              products={productList}
-              cart={cart}
-              increaseQuantity={increaseQuantity}
-              decreaseQuantity={decreaseQuantity}
-              removeFromCart={removeFromCart}
-              clearCart={clearCart}
-            />
-          }
-        />
+          <Route
+            path="/cart"
+            element={
+              <Cart
+                products={productList}
+                cart={cart}
+                increaseQuantity={increaseQuantity}
+                decreaseQuantity={decreaseQuantity}
+                removeFromCart={removeFromCart}
+                clearCart={clearCart}
+              />
+            }
+          />
 
-        <Route
-          path="/favorites"
-          element={<Favorites products={productList} />}
-        />
+          <Route
+            path="/favorites"
+            element={<Favorites products={productList} />}
+          />
 
-        <Route
-          path="/add-product"
-          element={
-            <AddProduct products={productList} addNewProduct={addNewProduct} />
-          }
-        />
-      </Routes>
-    </BrowserRouter>
+          <Route
+            path="/add-product"
+            element={
+              <AddProduct
+                products={productList}
+                addNewProduct={addNewProduct}
+              />
+            }
+          />
+        </Routes>
+      </BrowserRouter>
+    </div>
   );
 }
 

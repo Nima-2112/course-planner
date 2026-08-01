@@ -10,10 +10,6 @@ function Cart({
   removeFromCart,
   clearCart,
 }: any) {
-  if (cart.length === 0) {
-    return <h2 style={{ textAlign: "center" }}>Your Cart is Empty</h2>;
-  }
-
   const cartItems = cart.map((item: any) => {
     const product = products.find((p: any) => p.id === item.id);
 
@@ -37,7 +33,9 @@ function Cart({
   const total = subtotal + tax + shipping - discount;
 
   const { favorites, toggleFavorite } = useContext(FavoriteContext);
-
+  if (cart.length === 0) {
+    return <h2 style={{ textAlign: "center" }}>Your Cart is Empty</h2>;
+  }
   const totalQuantity = cart.reduce(
     (total: number, item: any) => total + item.quantity,
     0,
