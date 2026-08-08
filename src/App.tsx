@@ -1,8 +1,10 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Route } from "react-router-dom";
 import { useContext, useState } from "react";
+import { Routes } from "react-router-dom";
 
 import Navbar from "./components/Navbar";
 import Toast from "./components/Toast";
+import ProtectedRoute from "./components/ProtectedRoute";
 
 import Home from "./pages/Home";
 import HomeLoader from "./pages/HomeLoader";
@@ -10,6 +12,8 @@ import Products from "./pages/Products";
 import Cart from "./pages/Cart";
 import Favorites from "./pages/Favorites";
 import AddProduct from "./pages/AddProduct";
+import Login from "./pages/Login";
+import ProductDetails from "./pages/ProductDetails";
 
 import { ThemeContext } from "./context/ThemeContext";
 
@@ -19,6 +23,7 @@ import type { Product } from "./interfaces/Product";
 import "./styles/theme.css";
 import "./styles/modal.css";
 import "./styles/loader.css";
+import "./styles/toast.css";
 
 function App() {
   // ===============================
@@ -136,7 +141,7 @@ function App() {
     <div className={darkMode ? "dark" : "light"}>
       <BrowserRouter>
         {/* Toast Notification */}
-        <Toast />
+        <Toast message="" />
 
         {/* Navigation */}
         <Navbar />
@@ -146,7 +151,12 @@ function App() {
           <Route path="/" element={<Home />} />
 
           <Route path="/home-loading" element={<HomeLoader />} />
-
+          <Route element={<ProtectedRoute />}>
+            <Route
+              path="/favorites"
+              element={<Favorites products={products} />}
+            />
+          </Route>
           <Route
             path="/products"
             element={
@@ -157,7 +167,7 @@ function App() {
               />
             }
           />
-
+          <Route path="/products/:id" element={<ProductDetails />} />
           <Route
             path="/cart"
             element={
@@ -186,6 +196,8 @@ function App() {
               />
             }
           />
+
+          <Route path="/login" element={<Login />} />
         </Routes>
       </BrowserRouter>
     </div>

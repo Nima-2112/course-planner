@@ -1,3 +1,5 @@
+import { Link } from "react-router-dom";
+
 import { useState, useContext, useEffect } from "react";
 
 import { FavoriteContext } from "../context/FavoriteContext";
@@ -234,7 +236,7 @@ function Products({ products, cart, addToCart }: ProductsProps) {
           />
         ))}
       </div>
-
+      <Link to={`/products/$products.map((product) => ()`}>View Details</Link>
       <Pagination
         currentPage={currentPage}
         totalPages={totalPages}

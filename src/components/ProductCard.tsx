@@ -11,20 +11,26 @@ export type Product = {
 import "../styles/Card.css";
 
 type ProductCardProps = {
-  product: {
-    id: number;
-    code: string;
-    name: string;
-    category: string;
-    price: number;
-    image: string;
-    description: string;
-  };
+  product: Product;
+
   isAdded: boolean;
+
   addToCart: (id: number) => void;
+
+  isFavorite: boolean;
+
+  toggleFavorite: (id: number) => void;
+  openModal: (product: Product) => void;
 };
 
-function ProductCard({ product, isAdded, addToCart }: ProductCardProps) {
+function ProductCard({
+  product,
+  isAdded,
+  addToCart,
+  isFavorite,
+  toggleFavorite,
+  openModal,
+}: ProductCardProps) {
   return (
     <div className="product-card">
       <img src={product.image} alt={product.name} />
@@ -44,10 +50,13 @@ function ProductCard({ product, isAdded, addToCart }: ProductCardProps) {
       </p>
 
       <p>{product.description}</p>
-
+      <button onClick={() => toggleFavorite(product.id)}>
+        {isFavorite ? "❤️" : "🤍"}
+      </button>
       <button disabled={isAdded} onClick={() => addToCart(product.id)}>
         {isAdded ? "Added" : "Add to Cart"}
       </button>
+      <button onClick={() => openModal(product)}>View Details</button>
     </div>
   );
 }

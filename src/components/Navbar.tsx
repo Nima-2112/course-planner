@@ -1,3 +1,4 @@
+import { useAuth } from "../hooks/useAuth";
 import "../styles/Navbar.css";
 import { Link } from "react-router-dom";
 import { useContext } from "react";
@@ -7,7 +8,17 @@ import { FavoriteContext } from "../context/FavoriteContext";
 
 function Navbar() {
   const { favorites } = useContext(FavoriteContext);
-
+  const { user, isAuthenticated, logout } = useAuth();
+  {
+    isAuthenticated ? (
+      <>
+        <span>Hello, {user?.username}</span>
+        <button onClick={logout}>Logout</button>
+      </>
+    ) : (
+      <Link to="/login">Login</Link>
+    );
+  }
   return (
     <nav className="navbar">
       <div className="nav-links">

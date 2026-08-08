@@ -17,7 +17,6 @@ function Favorites({ products }: FavoritesProps) {
   return (
     <div className="page">
       <h1>❤️ My Favorites</h1>
-
       {favoriteProducts.length === 0 ? (
         <div className="empty">
           <h2>No Favorite Products</h2>
