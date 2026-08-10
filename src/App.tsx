@@ -13,194 +13,73 @@ import Cart from "./pages/Cart";
 import Favorites from "./pages/Favorites";
 import AddProduct from "./pages/AddProduct";
 import Login from "./pages/Login";
-import ProductDetails from "./pages/ProductDetails";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { useState } from "react";
 
-import { ThemeContext } from "./context/ThemeContext";
+import Navbar from "./components/Navbar";
+import Home from "./pages/Home";
+import Catalog from "./pages/Catalog";
+import Planner from "./pages/Planner";
+import AddCourse from "./pages/AddCourse";
 
-import { products } from "./data/products";
-import type { Product } from "./interfaces/Product";
-
-import "./styles/theme.css";
-import "./styles/modal.css";
-import "./styles/loader.css";
-import "./styles/toast.css";
+import { courses } from "./data/courses";
 
 function App() {
-  // ===============================
-  // Theme
-  // ===============================
-
-  const { darkMode } = useContext(ThemeContext);
-
-  // ===============================
-  // Products
-  // ===============================
-
-  const [productList, setProductList] = useState<Product[]>(products);
-
-  // ===============================
-  // Shopping Cart
-  // ===============================
-
-  const [cart, setCart] = useState<{ id: number; quantity: number }[]>([]);
-
-  // ===============================
-  // Add To Cart
-  // ===============================
-
-  const addToCart = (id: number) => {
-    setCart((prevCart) => {
-      const exist = prevCart.find((item) => item.id === id);
-
-      if (exist) {
-        return prevCart.map((item) =>
-          item.id === id
-            ? {
-                ...item,
-                quantity: item.quantity + 1,
-              }
-            : item,
-        );
-      }
-
-      return [
-        ...prevCart,
-        {
-          id,
-          quantity: 1,
-        },
-      ];
-    });
+  const [courseList, setCourseList] = useState(courses);
+  const addNewCourse = (newCourse: any) => {
+    setCourseList([...courseList, newCourse]);
   };
 
-  // ===============================
-  // Increase Quantity
-  // ===============================
+  const [planner, setPlanner] = useState<number[]>([]);
 
-  const increaseQuantity = (id: number) => {
-    setCart((prevCart) =>
-      prevCart.map((item) =>
-        item.id === id
-          ? {
-              ...item,
-              quantity: item.quantity + 1,
-            }
-          : item,
-      ),
-    );
+  const addCourse = (id: number) => {
+    if (!planner.includes(id)) {
+      setPlanner([...planner, id]);
+    }
   };
 
-  // ===============================
-  // Decrease Quantity
-  // ===============================
-
-  const decreaseQuantity = (id: number) => {
-    setCart((prevCart) =>
-      prevCart
-        .map((item) =>
-          item.id === id
-            ? {
-                ...item,
-                quantity: item.quantity - 1,
-              }
-            : item,
-        )
-        .filter((item) => item.quantity > 0),
-    );
+  const removeCourse = (id: number) => {
+    setPlanner(planner.filter((courseId) => courseId !== id));
   };
-
-  // ===============================
-  // Remove Product
-  // ===============================
-
-  const removeFromCart = (id: number) => {
-    setCart((prevCart) => prevCart.filter((item) => item.id !== id));
-  };
-
-  // ===============================
-  // Clear Cart
-  // ===============================
-
-  const clearCart = () => {
-    setCart([]);
-  };
-
-  // ===============================
-  // Add New Product
-  // ===============================
-
-  const addNewProduct = (newProduct: Product) => {
-    setProductList((prevProducts) => [...prevProducts, newProduct]);
-  };
-
-  // ===============================
-  // Render
-  // ===============================
 
   return (
-    <div className={darkMode ? "dark" : "light"}>
-      <BrowserRouter>
-        {/* Toast Notification */}
-        <Toast message="" />
+    <BrowserRouter>
+      <Navbar />
 
-        {/* Navigation */}
-        <Navbar />
-
-        {/* Pages */}
-        <Routes>
-          <Route path="/" element={<Home />} />
-
-          <Route path="/home-loading" element={<HomeLoader />} />
-          <Route element={<ProtectedRoute />}>
-            <Route
-              path="/favorites"
-              element={<Favorites products={products} />}
+      <Routes>
+        <Route
+          path="/"
+          element={<Home planner={planner} courses={courseList} />}
+        />
+        <Route
+          path="/catalog"
+          element={
+            <Catalog
+              courses={courseList}
+              planner={planner}
+              addCourse={addCourse}
             />
-          </Route>
-          <Route
-            path="/products"
-            element={
-              <Products
-                products={productList}
-                cart={cart}
-                addToCart={addToCart}
-              />
-            }
-          />
-          <Route path="/products/:id" element={<ProductDetails />} />
-          <Route
-            path="/cart"
-            element={
-              <Cart
-                products={productList}
-                cart={cart}
-                increaseQuantity={increaseQuantity}
-                decreaseQuantity={decreaseQuantity}
-                removeFromCart={removeFromCart}
-                clearCart={clearCart}
-              />
-            }
-          />
+          }
+        />
+        <Route
+          path="/planner"
+          element={
+            <Planner
+              courses={courseList}
+              planner={planner}
+              removeCourse={removeCourse}
+            />
+          }
+        />
 
-          <Route
-            path="/favorites"
-            element={<Favorites products={productList} />}
-          />
-
-          <Route
-            path="/add-product"
-            element={
-              <AddProduct
-                products={productList}
-                addNewProduct={addNewProduct}
-              />
-            }
-          />
-
-          <Route path="/login" element={<Login />} />
-        </Routes>
-      </BrowserRouter>
-    </div>
+        <Route
+          path="/add-course"
+          element={
+            <AddCourse courses={courseList} addNewCourse={addNewCourse} />
+          }
+        />
+      </Routes>
+    </BrowserRouter>
   );
 }
 

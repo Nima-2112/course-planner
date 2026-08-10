@@ -1,39 +1,33 @@
-import { useAuth } from "../hooks/useAuth";
 import "../styles/Navbar.css";
 import { Link } from "react-router-dom";
-import { useContext } from "react";
-
-import ThemeButton from "./ThemeButton";
-import { FavoriteContext } from "../context/FavoriteContext";
 
 function Navbar() {
-  const { favorites } = useContext(FavoriteContext);
-  const { user, isAuthenticated, logout } = useAuth();
-  {
-    isAuthenticated ? (
-      <>
-        <span>Hello, {user?.username}</span>
-        <button onClick={logout}>Logout</button>
-      </>
-    ) : (
-      <Link to="/login">Login</Link>
-    );
-  }
   return (
-    <nav className="navbar">
-      <div className="nav-links">
-        <Link to="/home-loading">Home</Link>
+    <nav>
+      <ul
+        style={{
+          display: "flex",
+          gap: "20px",
+          listStyle: "none",
+          padding: "20px",
+        }}
+      >
+        <li>
+          <Link to="/">Home</Link>
+        </li>
 
-        <Link to="/favorites">Favorites ({favorites.length})</Link>
+        <li>
+          <Link to="/catalog">Course Catalog</Link>
+        </li>
 
-        <Link to="/products">Products</Link>
+        <li>
+          <Link to="/planner">My Planner</Link>
+        </li>
 
-        <Link to="/cart">Shopping Cart</Link>
-
-        <Link to="/add-product">Add Product</Link>
-      </div>
-
-      <ThemeButton />
+        <li>
+          <Link to="/add-course">Add Course</Link>
+        </li>
+      </ul>
     </nav>
   );
 }
