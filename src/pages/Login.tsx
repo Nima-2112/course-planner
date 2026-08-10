@@ -1,17 +1,13 @@
-import "../styles/login.css";
-import { useState } from "react";
-import type { FormEvent } from "react";
+import { FormEvent, useState } from "react";
 
-import { Navigate, useLocation, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 import { useAuth } from "../hooks/useAuth";
 
 function Login() {
-  const { login, isAuthenticated } = useAuth();
-
   const navigate = useNavigate();
 
-  const location = useLocation();
+  const { login, isAuthenticated } = useAuth();
 
   const [username, setUsername] = useState("");
 
@@ -20,7 +16,7 @@ function Login() {
   const [error, setError] = useState("");
 
   if (isAuthenticated) {
-    return <Navigate to="/" replace />;
+    navigate("/");
   }
 
   const handleSubmit = (event: FormEvent) => {
@@ -31,55 +27,37 @@ function Login() {
     const success = login(username, password);
 
     if (success) {
-      const from = location.state?.from?.pathname || "/";
-
-      navigate(from, {
-        replace: true,
-      });
-
-      return;
+      navigate("/");
+    } else {
+      setError("Username or password is incorrect.");
     }
-
-    setError("نام کاربری یا رمز عبور اشتباه است.");
   };
 
   return (
     <main className="login-page">
-      <form className="login-form" onSubmit={handleSubmit}>
+      <div className="login-card">
         <h1>Login</h1>
 
-        <div>
-          <label>Username</label>
-
+        <form onSubmit={handleSubmit}>
           <input
             type="text"
+            placeholder="Username"
             value={username}
             onChange={(event) => setUsername(event.target.value)}
-            placeholder="admin"
           />
-        </div>
-
-        <div>
-          <label>Password</label>
 
           <input
             type="password"
+            placeholder="Password"
             value={password}
             onChange={(event) => setPassword(event.target.value)}
-            placeholder="123456"
           />
-        </div>
 
-        {error && <p className="login-error">{error}</p>}
+          {error && <p className="login-error">{error}</p>}
 
-        <button type="submit">Login</button>
-
-        <p>
-          Test account:
-          <br />
-          admin / 123456
-        </p>
-      </form>
+          <button type="submit">Login</button>
+        </form>
+      </div>
     </main>
   );
 }
