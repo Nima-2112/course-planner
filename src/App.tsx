@@ -1,18 +1,3 @@
-import { BrowserRouter, Route } from "react-router-dom";
-import { useContext, useState } from "react";
-import { Routes } from "react-router-dom";
-
-import Navbar from "./components/Navbar";
-import Toast from "./components/Toast";
-import ProtectedRoute from "./components/ProtectedRoute";
-
-import Home from "./pages/Home";
-import HomeLoader from "./pages/HomeLoader";
-import Products from "./pages/Products";
-import Cart from "./pages/Cart";
-import Favorites from "./pages/Favorites";
-import AddProduct from "./pages/AddProduct";
-import Login from "./pages/Login";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { useState } from "react";
 
