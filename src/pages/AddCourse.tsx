@@ -35,7 +35,6 @@ function AddCourse({ courses, addNewCourse }: Props) {
       credits,
       description: "Custom course",
     };
-
     //-------Add Course-------
     addNewCourse(newCourse);
 
@@ -56,7 +55,6 @@ function AddCourse({ courses, addNewCourse }: Props) {
       <div className="add-course-box">
         {/*-------Title-------*/}
         <h1>Add New Course</h1>
-
         {/*-------Form-------*/}
         <form onSubmit={handleSubmit}>
           {/*-------Course Code-------*/}
