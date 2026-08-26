@@ -1,13 +1,16 @@
+//-------import-------
 import "../styles/Layout.css";
 import "../styles/Card.css";
 import "../styles/MyPlanner.css";
+//-------Props-------
 type Props = {
   courses: any[];
   planner: number[];
   removeCourse: (id: number) => void;
 };
-
+//-------Component-------
 function Planner({ courses, planner, removeCourse }: Props) {
+  //-------State-------
   const selectedCourses = courses.filter((course) =>
     planner.includes(course.id),
   );
