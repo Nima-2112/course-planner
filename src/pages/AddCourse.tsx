@@ -1,17 +1,23 @@
-import "../styles/Layout.css";
+//-------import-------
 import { useState } from "react";
+import "../styles/Layout.css";
+import "../styles/AddCourse.css";
 
+//-------Props-------
 type Props = {
   courses: any[];
   addNewCourse: (course: any) => void;
 };
 
+//-------Component-------
 function AddCourse({ courses, addNewCourse }: Props) {
+  //-------State-------
   const [code, setCode] = useState("");
   const [title, setTitle] = useState("");
   const [department, setDepartment] = useState("Computer Science");
   const [credits, setCredits] = useState(3);
 
+  //-------Handle Submit-------
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -20,6 +26,7 @@ function AddCourse({ courses, addNewCourse }: Props) {
       return;
     }
 
+    //-------Create New Course-------
     const newCourse = {
       id: Date.now(),
       code,
@@ -29,72 +36,95 @@ function AddCourse({ courses, addNewCourse }: Props) {
       description: "Custom course",
     };
 
+    //-------Add Course-------
     addNewCourse(newCourse);
 
+    //-------Reset Form-------
     setCode("");
     setTitle("");
     setDepartment("Computer Science");
     setCredits(3);
 
+    //-------Success Message-------
     alert("Course added successfully!");
   };
 
+  //-------Return-------
   return (
-    <div>
-      <h1>Add New Course</h1>
+    <div className="add-course-page">
+      {/*-------Add Course Box-------*/}
+      <div className="add-course-box">
+        {/*-------Title-------*/}
+        <h1>Add New Course</h1>
 
-      <form onSubmit={handleSubmit}>
-        <div>
-          <label>Course Code</label>
-          <br />
-          <input value={code} onChange={(e) => setCode(e.target.value)} />
-        </div>
+        {/*-------Form-------*/}
+        <form onSubmit={handleSubmit}>
+          {/*-------Course Code-------*/}
+          <div className="form-group">
+            <label htmlFor="course-code">Course Code</label>
 
-        <br />
+            <input
+              id="course-code"
+              type="text"
+              value={code}
+              onChange={(e) => setCode(e.target.value)}
+              placeholder="Enter course code"
+            />
+          </div>
 
-        <div>
-          <label>Course Title</label>
-          <br />
-          <input value={title} onChange={(e) => setTitle(e.target.value)} />
-        </div>
+          {/*-------Course Title-------*/}
+          <div className="form-group">
+            <label htmlFor="course-title">Course Title</label>
 
-        <br />
+            <input
+              id="course-title"
+              type="text"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              placeholder="Enter course title"
+            />
+          </div>
 
-        <div>
-          <label>Department</label>
-          <br />
-          <select
-            value={department}
-            onChange={(e) => setDepartment(e.target.value)}
-          >
-            <option>Computer Science</option>
-            <option>Mathematics</option>
-            <option>History</option>
-            <option>Physics</option>
-            <option>Languages</option>
-          </select>
-        </div>
+          {/*-------Department-------*/}
+          <div className="form-group">
+            <label htmlFor="department">Department</label>
 
-        <br />
+            <select
+              id="department"
+              value={department}
+              onChange={(e) => setDepartment(e.target.value)}
+            >
+              <option>Computer Science</option>
+              <option>Mathematics</option>
+              <option>History</option>
+              <option>Physics</option>
+              <option>Languages</option>
+            </select>
+          </div>
 
-        <div>
-          <label>Credits</label>
-          <br />
-          <input
-            type="number"
-            min={1}
-            max={6}
-            value={credits}
-            onChange={(e) => setCredits(Number(e.target.value))}
-          />
-        </div>
+          {/*-------Credits-------*/}
+          <div className="form-group">
+            <label htmlFor="credits">Credits</label>
 
-        <br />
+            <input
+              id="credits"
+              type="number"
+              min={1}
+              max={6}
+              value={credits}
+              onChange={(e) => setCredits(Number(e.target.value))}
+            />
+          </div>
 
-        <button type="submit">Add Course</button>
-      </form>
+          {/*-------Submit Button-------*/}
+          <button type="submit" className="add-course-button">
+            Add Course
+          </button>
+        </form>
+      </div>
     </div>
   );
 }
 
+//-------Export-------
 export default AddCourse;
