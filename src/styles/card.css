@@ -4,6 +4,10 @@
   padding: 20px;
   box-shadow: 0 3px 10px rgba(0, 0, 0, 0.15);
   transition: 0.3s;
+
+  display: flex;
+  flex-direction: column;
+  height: 100%;
 }
 
 .course-card:hover {
@@ -20,7 +24,7 @@
 }
 
 .course-card button {
-  margin-top: 15px;
+  margin-top: auto;
   background: #2563eb;
   color: white;
   border: none;
