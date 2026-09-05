@@ -26,3 +26,40 @@ nav li a:hover {
   background: #2563eb;
   color: white;
 }
+/*-------Navbar Auth-------*/
+.navbar-auth {
+  margin-left: auto;
+
+  display: flex;
+
+  align-items: center;
+
+  gap: 12px;
+}
+
+/*-------Navbar User-------*/
+.navbar-user {
+  color: #333;
+
+  font-weight: 600;
+}
+
+/*-------Logout Button-------*/
+.logout-button {
+  padding: 8px 14px;
+
+  background: #dc2626;
+
+  color: white;
+
+  border: none;
+
+  border-radius: 5px;
+
+  cursor: pointer;
+}
+
+/*-------Logout Button Hover-------*/
+.logout-button:hover {
+  background: #b91c1c;
+}

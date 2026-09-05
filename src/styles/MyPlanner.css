@@ -1,54 +1,151 @@
+/*-------Planner Page-------*/
 .planner-page {
   width: 90%;
   max-width: 1200px;
+
   margin: 0 auto;
+
   padding: 30px 0;
 }
 
+/*-------Title-------*/
 .planner-page > h1 {
   text-align: center;
+
   color: #1e3a8a;
+
   margin-bottom: 20px;
 }
 
+/*-------Total Credits-------*/
 .total-credits {
   text-align: center;
+
   margin-bottom: 30px;
 }
 
+/*-------Empty Planner-------*/
 .empty-planner {
   width: 100%;
   max-width: 600px;
+
   min-height: 220px;
+
   margin: 80px auto;
 
   background: white;
+
   border-radius: 12px;
+
   padding: 40px;
 
   box-shadow: 0 3px 10px rgba(0, 0, 0, 0.15);
 
   display: flex;
+
   flex-direction: column;
+
   justify-content: center;
+
   align-items: center;
 
   text-align: center;
+
+  box-sizing: border-box;
 }
 
+/*-------Empty Planner Title-------*/
 .empty-planner h2 {
   color: #1e3a8a;
+
   margin-bottom: 15px;
 }
 
+/*-------Empty Planner Text-------*/
 .empty-planner p {
   color: #666;
+
   font-size: 18px;
+
   margin: 0;
 }
 
+/*-------Planner Actions-------*/
+.planner-actions {
+  display: flex;
+
+  flex-direction: column;
+
+  align-items: center;
+
+  margin-bottom: 25px;
+}
+
+/*-------Save Button-------*/
+.save-planner-button {
+  padding: 12px 24px;
+
+  background: #2563eb;
+
+  color: white;
+
+  border: none;
+
+  border-radius: 6px;
+
+  font-size: 16px;
+
+  cursor: pointer;
+}
+
+/*-------Save Button Hover-------*/
+.save-planner-button:hover {
+  background: #1d4ed8;
+}
+
+/*-------Save Button Disabled-------*/
+.save-planner-button:disabled {
+  background: #93c5fd;
+
+  cursor: not-allowed;
+}
+
+/*-------Planner Message-------*/
+.planner-message {
+  margin-top: 12px;
+
+  color: #166534;
+
+  font-size: 14px;
+}
+
+/*-------Planner Grid-------*/
 .planner-grid {
   display: grid;
+
   grid-template-columns: repeat(3, 1fr);
+
   gap: 20px;
+}
+
+/*-------Mobile-------*/
+@media (max-width: 900px) {
+  .planner-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/*-------Small Mobile-------*/
+@media (max-width: 600px) {
+  .planner-page {
+    width: 90%;
+  }
+
+  .planner-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .empty-planner {
+    margin: 50px auto;
+  }
 }
