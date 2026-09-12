@@ -1,63 +1,59 @@
 //-------import-------
-import "../styles/Navbar.css";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+
 import { useAuth } from "../context/AuthContext";
+
+import "../styles/Navbar.css";
 
 //-------Component-------
 function Navbar() {
-  //-------Auth-------
-  const { user, logout } = useAuth();
+  //-------Authentication-------
+  const { user, isLoggedIn, logout } = useAuth();
+
+  //-------Navigation-------
+  const navigate = useNavigate();
+
+  //-------Logout Handler-------
+  function handleLogout() {
+    logout();
+
+    navigate("/login");
+  }
 
   //-------Return-------
   return (
-    <nav>
-      <ul
-        style={{
-          display: "flex",
-          gap: "20px",
-          listStyle: "none",
-          padding: "20px",
-          alignItems: "center",
-        }}
-      >
-        {/*-------Home-------*/}
-        <li>
-          <Link to="/">Home</Link>
-        </li>
+    <nav className="navbar">
+      <div className="navbar-left">
+        <Link to="/" className="navbar-logo">
+          Course Planner
+        </Link>
 
-        {/*-------Catalog-------*/}
-        <li>
-          <Link to="/catalog">Course Catalog</Link>
-        </li>
+        <Link to="/">Home</Link>
 
-        {/*-------Planner-------*/}
-        <li>
-          <Link to="/planner">My Planner</Link>
-        </li>
+        <Link to="/catalog">Catalog</Link>
 
-        {/*-------Add Course-------*/}
-        <li>
-          <Link to="/add-course">Add Course</Link>
-        </li>
+        <Link to="/planner">My Planner</Link>
 
-        {/*-------Authentication-------*/}
-        <li className="navbar-auth">
-          {user ? (
-            <>
-              <span className="navbar-user">Welcome, {user.username}</span>
+        <Link to="/add-course">Add Course</Link>
+      </div>
 
-              <button onClick={logout} className="logout-button">
-                Logout
-              </button>
-            </>
-          ) : (
-            <Link to="/login">Login</Link>
-          )}
-        </li>
-      </ul>
+      <div className="navbar-right">
+        {isLoggedIn ? (
+          <>
+            <span className="navbar-user">Welcome, {user?.username}</span>
+
+            <button className="navbar-button" onClick={handleLogout}>
+              Logout
+            </button>
+          </>
+        ) : (
+          <Link to="/login" className="navbar-login">
+            Login
+          </Link>
+        )}
+      </div>
     </nav>
   );
 }
 
-//-------Export-------
 export default Navbar;

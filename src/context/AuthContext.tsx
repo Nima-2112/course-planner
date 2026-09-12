@@ -15,49 +15,54 @@ type User = {
 
 type AuthContextType = {
   user: User | null;
-  token: string | null;
-  isLoading: boolean;
+  isLoggedIn: boolean;
   login: (username: string, password: string) => Promise<void>;
   register: (username: string, password: string) => Promise<void>;
   logout: () => void;
 };
 
+//-------Constants-------
+const AUTH_STORAGE_KEY = "coursePlannerAuth";
+
 //-------Context-------
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-//-------Props-------
-type Props = {
-  children: ReactNode;
-};
-
 //-------Provider-------
-export function AuthProvider({ children }: Props) {
+function AuthProvider({ children }: { children: ReactNode }) {
   //-------State-------
-  const [user, setUser] = useState<User | null>(null);
-  const [token, setToken] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const [user, setUser] = useState<User | null>(() => {
+    try {
+      const savedAuth = localStorage.getItem(AUTH_STORAGE_KEY);
 
-  //-------Restore Session-------
-  useEffect(() => {
-    const savedToken = localStorage.getItem("course_planner_token");
-    const savedUser = localStorage.getItem("course_planner_user");
-
-    if (savedToken && savedUser) {
-      try {
-        setToken(savedToken);
-        setUser(JSON.parse(savedUser));
-      } catch {
-        localStorage.removeItem("course_planner_token");
-        localStorage.removeItem("course_planner_user");
+      if (!savedAuth) {
+        return null;
       }
-    }
 
-    setIsLoading(false);
-  }, []);
+      const parsed = JSON.parse(savedAuth);
+
+      return parsed.user || null;
+    } catch {
+      return null;
+    }
+  });
+
+  //-------Save Authentication-------
+  useEffect(() => {
+    if (user) {
+      localStorage.setItem(
+        AUTH_STORAGE_KEY,
+        JSON.stringify({
+          user,
+        }),
+      );
+    } else {
+      localStorage.removeItem(AUTH_STORAGE_KEY);
+    }
+  }, [user]);
 
   //-------Login-------
-  const login = async (username: string, password: string) => {
-    const response = await fetch("http://localhost:5000/api/auth/login", {
+  async function login(username: string, password: string) {
+    const response = await fetch("/api/auth/login", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -74,16 +79,14 @@ export function AuthProvider({ children }: Props) {
       throw new Error(data.message || "Login failed.");
     }
 
-    setUser(data.user);
-    setToken(data.token);
+    localStorage.setItem("coursePlannerToken", data.token);
 
-    localStorage.setItem("course_planner_token", data.token);
-    localStorage.setItem("course_planner_user", JSON.stringify(data.user));
-  };
+    setUser(data.user);
+  }
 
   //-------Register-------
-  const register = async (username: string, password: string) => {
-    const response = await fetch("http://localhost:5000/api/auth/register", {
+  async function register(username: string, password: string) {
+    const response = await fetch("/api/auth/register", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -100,29 +103,25 @@ export function AuthProvider({ children }: Props) {
       throw new Error(data.message || "Registration failed.");
     }
 
-    setUser(data.user);
-    setToken(data.token);
+    localStorage.setItem("coursePlannerToken", data.token);
 
-    localStorage.setItem("course_planner_token", data.token);
-    localStorage.setItem("course_planner_user", JSON.stringify(data.user));
-  };
+    setUser(data.user);
+  }
 
   //-------Logout-------
-  const logout = () => {
+  function logout() {
+    localStorage.removeItem("coursePlannerToken");
+    localStorage.removeItem("coursePlannerAuth");
+
     setUser(null);
-    setToken(null);
+  }
 
-    localStorage.removeItem("course_planner_token");
-    localStorage.removeItem("course_planner_user");
-  };
-
-  //-------Context Value-------
+  //-------Return-------
   return (
     <AuthContext.Provider
       value={{
         user,
-        token,
-        isLoading,
+        isLoggedIn: Boolean(user),
         login,
         register,
         logout,
@@ -133,7 +132,7 @@ export function AuthProvider({ children }: Props) {
   );
 }
 
-//-------Hook-------
+//-------Custom Hook-------
 export function useAuth() {
   const context = useContext(AuthContext);
 
@@ -143,3 +142,6 @@ export function useAuth() {
 
   return context;
 }
+
+//-------Export-------
+export default AuthProvider;

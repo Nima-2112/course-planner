@@ -1,6 +1,5 @@
 //-------import-------
 import http from "node:http";
-import crypto from "node:crypto";
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
@@ -45,7 +44,13 @@ function readUsers(): User[] {
 
   const data = fs.readFileSync(USERS_FILE, "utf-8");
 
-  return JSON.parse(data) as User[];
+  try {
+    return JSON.parse(data) as User[];
+  } catch {
+    console.error("users.json contains invalid JSON.");
+
+    return [];
+  }
 }
 
 function writeUsers(users: User[]) {
@@ -61,7 +66,7 @@ function sendJson(
   data: unknown,
 ) {
   response.writeHead(statusCode, {
-    "Content-Type": "application/json",
+    "Content-Type": "application/json; charset=utf-8",
     "Access-Control-Allow-Origin": "http://localhost:5175",
     "Access-Control-Allow-Headers": "Content-Type, Authorization",
     "Access-Control-Allow-Methods": "GET, POST, PUT, OPTIONS",
@@ -104,7 +109,7 @@ function getTokenFromRequest(request: http.IncomingMessage): string | null {
     return null;
   }
 
-  return authorization.replace("Bearer ", "");
+  return authorization.substring("Bearer ".length);
 }
 
 function getAuthenticatedUser(request: http.IncomingMessage): User | null {
@@ -128,205 +133,249 @@ function getAuthenticatedUser(request: http.IncomingMessage): User | null {
 }
 
 //-------Server-------
-const server = http.createServer(async (request, response) => {
-  //-------CORS Preflight-------
-  if (request.method === "OPTIONS") {
-    response.writeHead(204, {
-      "Access-Control-Allow-Origin": "http://localhost:5175",
-      "Access-Control-Allow-Headers": "Content-Type, Authorization",
-      "Access-Control-Allow-Methods": "GET, POST, PUT, OPTIONS",
-    });
-
-    response.end();
-
-    return;
-  }
-
-  try {
-    //-------Register-------
-    if (request.method === "POST" && request.url === "/api/auth/register") {
-      const body = await getBody(request);
-
-      const username = String(body.username || "").trim();
-      const password = String(body.password || "");
-
-      if (!username || !password) {
-        sendJson(response, 400, {
-          message: "Username and password are required.",
-        });
-
-        return;
-      }
-
-      if (password.length < 6) {
-        sendJson(response, 400, {
-          message: "Password must be at least 6 characters.",
-        });
-
-        return;
-      }
-
-      const users = readUsers();
-
-      const existingUser = users.find(
-        (user) => user.username.toLowerCase() === username.toLowerCase(),
-      );
-
-      if (existingUser) {
-        sendJson(response, 409, {
-          message: "Username already exists.",
-        });
-
-        return;
-      }
-
-      const passwordHash = await bcrypt.hash(password, 10);
-
-      const user: User = {
-        id: Date.now(),
-        username,
-        passwordHash,
-        planner: [],
-      };
-
-      users.push(user);
-
-      writeUsers(users);
-
-      const token = jwt.sign({ userId: user.id }, JWT_SECRET, {
-        expiresIn: "7d",
+const server = http.createServer(
+  async (request: http.IncomingMessage, response: http.ServerResponse) => {
+    //-------CORS Preflight-------
+    if (request.method === "OPTIONS") {
+      response.writeHead(204, {
+        "Access-Control-Allow-Origin": "http://localhost:5175",
+        "Access-Control-Allow-Headers": "Content-Type, Authorization",
+        "Access-Control-Allow-Methods": "GET, POST, PUT, OPTIONS",
       });
 
-      sendJson(response, 201, {
-        token,
-        user: {
-          id: user.id,
-          username: user.username,
-        },
-      });
+      response.end();
 
       return;
     }
 
-    //-------Login-------
-    if (request.method === "POST" && request.url === "/api/auth/login") {
-      const body = await getBody(request);
-
-      const username = String(body.username || "").trim();
-      const password = String(body.password || "");
-
-      const users = readUsers();
-
-      const user = users.find(
-        (item) => item.username.toLowerCase() === username.toLowerCase(),
-      );
-
-      if (!user) {
-        sendJson(response, 401, {
-          message: "Invalid username or password.",
+    try {
+      //-------Health Check-------
+      if (request.method === "GET" && request.url === "/api/health") {
+        sendJson(response, 200, {
+          message: "Course Planner API is running.",
         });
 
         return;
       }
 
-      const passwordIsValid = await bcrypt.compare(password, user.passwordHash);
+      //-------Register-------
+      if (request.method === "POST" && request.url === "/api/auth/register") {
+        const body = await getBody(request);
 
-      if (!passwordIsValid) {
-        sendJson(response, 401, {
-          message: "Invalid username or password.",
+        const username = String(body.username || "").trim();
+        const password = String(body.password || "");
+
+        if (!username || !password) {
+          sendJson(response, 400, {
+            message: "Username and password are required.",
+          });
+
+          return;
+        }
+
+        if (username.length < 3) {
+          sendJson(response, 400, {
+            message: "Username must be at least 3 characters.",
+          });
+
+          return;
+        }
+
+        if (password.length < 6) {
+          sendJson(response, 400, {
+            message: "Password must be at least 6 characters.",
+          });
+
+          return;
+        }
+
+        const users = readUsers();
+
+        const existingUser = users.find(
+          (user) => user.username.toLowerCase() === username.toLowerCase(),
+        );
+
+        if (existingUser) {
+          sendJson(response, 409, {
+            message: "Username already exists.",
+          });
+
+          return;
+        }
+
+        const passwordHash = await bcrypt.hash(password, 10);
+
+        const user: User = {
+          id: Date.now(),
+          username,
+          passwordHash,
+          planner: [],
+        };
+
+        users.push(user);
+
+        writeUsers(users);
+
+        const token = jwt.sign(
+          {
+            userId: user.id,
+          },
+          JWT_SECRET,
+          {
+            expiresIn: "7d",
+          },
+        );
+
+        sendJson(response, 201, {
+          token,
+          user: {
+            id: user.id,
+            username: user.username,
+          },
         });
 
         return;
       }
 
-      const token = jwt.sign({ userId: user.id }, JWT_SECRET, {
-        expiresIn: "7d",
-      });
+      //-------Login-------
+      if (request.method === "POST" && request.url === "/api/auth/login") {
+        const body = await getBody(request);
 
-      sendJson(response, 200, {
-        token,
-        user: {
-          id: user.id,
-          username: user.username,
-        },
-      });
+        const username = String(body.username || "").trim();
+        const password = String(body.password || "");
 
-      return;
+        if (!username || !password) {
+          sendJson(response, 400, {
+            message: "Username and password are required.",
+          });
+
+          return;
+        }
+
+        const users = readUsers();
+
+        const user = users.find(
+          (item) => item.username.toLowerCase() === username.toLowerCase(),
+        );
+
+        if (!user) {
+          sendJson(response, 401, {
+            message: "Invalid username or password.",
+          });
+
+          return;
+        }
+
+        const passwordIsValid = await bcrypt.compare(
+          password,
+          user.passwordHash,
+        );
+
+        if (!passwordIsValid) {
+          sendJson(response, 401, {
+            message: "Invalid username or password.",
+          });
+
+          return;
+        }
+
+        const token = jwt.sign(
+          {
+            userId: user.id,
+          },
+          JWT_SECRET,
+          {
+            expiresIn: "7d",
+          },
+        );
+
+        sendJson(response, 200, {
+          token,
+          user: {
+            id: user.id,
+            username: user.username,
+          },
+        });
+
+        return;
+      }
+
+      //-------Get Planner-------
+      if (request.method === "GET" && request.url === "/api/planner") {
+        const user = getAuthenticatedUser(request);
+
+        if (!user) {
+          sendJson(response, 401, {
+            message: "Authentication required.",
+          });
+
+          return;
+        }
+
+        sendJson(response, 200, {
+          planner: user.planner,
+        });
+
+        return;
+      }
+
+      //-------Save Planner-------
+      if (request.method === "PUT" && request.url === "/api/planner") {
+        const user = getAuthenticatedUser(request);
+
+        if (!user) {
+          sendJson(response, 401, {
+            message: "Authentication required.",
+          });
+
+          return;
+        }
+
+        const body = await getBody(request);
+
+        const planner = Array.isArray(body.planner)
+          ? body.planner.map(Number).filter((id) => Number.isFinite(id))
+          : [];
+
+        const uniquePlanner = [...new Set(planner)];
+
+        const users = readUsers();
+
+        const userIndex = users.findIndex((item) => item.id === user.id);
+
+        if (userIndex === -1) {
+          sendJson(response, 404, {
+            message: "User not found.",
+          });
+
+          return;
+        }
+
+        users[userIndex].planner = uniquePlanner;
+
+        writeUsers(users);
+
+        sendJson(response, 200, {
+          message: "Planner saved successfully.",
+          planner: uniquePlanner,
+        });
+
+        return;
+      }
+
+      //-------Not Found-------
+      sendJson(response, 404, {
+        message: "API endpoint not found.",
+      });
+    } catch (error) {
+      console.error("Server error:", error);
+
+      sendJson(response, 500, {
+        message: "Internal server error.",
+      });
     }
-
-    //-------Get Planner-------
-    if (request.method === "GET" && request.url === "/api/planner") {
-      const user = getAuthenticatedUser(request);
-
-      if (!user) {
-        sendJson(response, 401, {
-          message: "Authentication required.",
-        });
-
-        return;
-      }
-
-      sendJson(response, 200, {
-        planner: user.planner,
-      });
-
-      return;
-    }
-
-    //-------Save Planner-------
-    if (request.method === "PUT" && request.url === "/api/planner") {
-      const user = getAuthenticatedUser(request);
-
-      if (!user) {
-        sendJson(response, 401, {
-          message: "Authentication required.",
-        });
-
-        return;
-      }
-
-      const body = await getBody(request);
-
-      const planner = Array.isArray(body.planner)
-        ? body.planner.map(Number).filter((id) => Number.isFinite(id))
-        : [];
-
-      const users = readUsers();
-
-      const userIndex = users.findIndex((item) => item.id === user.id);
-
-      if (userIndex === -1) {
-        sendJson(response, 404, {
-          message: "User not found.",
-        });
-
-        return;
-      }
-
-      users[userIndex].planner = planner;
-
-      writeUsers(users);
-
-      sendJson(response, 200, {
-        message: "Planner saved successfully.",
-        planner,
-      });
-
-      return;
-    }
-
-    //-------Not Found-------
-    sendJson(response, 404, {
-      message: "API endpoint not found.",
-    });
-  } catch (error) {
-    console.error(error);
-
-    sendJson(response, 500, {
-      message: "Internal server error.",
-    });
-  }
-});
+  },
+);
 
 //-------Start Server-------
 ensureDatabase();

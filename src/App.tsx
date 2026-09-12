@@ -1,6 +1,7 @@
 //-------import-------
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { useState } from "react";
+
+import { useEffect, useState } from "react";
 
 import Navbar from "./components/Navbar";
 import ProtectedRoute from "./components/ProtectedRoute";
@@ -12,100 +13,140 @@ import AddCourse from "./pages/AddCourse";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 
-import { AuthProvider } from "./context/AuthContext";
 import { courses } from "./data/courses";
 
-//-------Component-------
+import { useAuth } from "./context/AuthContext";
+
+//-------Constants-------
+const PLANNER_STORAGE_KEY = "coursePlannerSelectedCourses";
+
+//-------App-------
 function App() {
-  //-------Course List-------
+  //-------Authentication-------
+  const { user, isLoggedIn } = useAuth();
+
+  //-------Course State-------
   const [courseList, setCourseList] = useState(courses);
 
-  //-------Add New Course-------
-  const addNewCourse = (newCourse: any) => {
-    setCourseList((currentCourses) => [...currentCourses, newCourse]);
-  };
-
-  //-------Planner-------
+  //-------Planner State-------
   const [planner, setPlanner] = useState<number[]>([]);
 
-  //-------Add Course-------
-  const addCourse = (id: number) => {
-    setPlanner((currentPlanner) => {
-      if (currentPlanner.includes(id)) {
-        return currentPlanner;
+  //-------Load Planner From Local Storage-------
+  useEffect(() => {
+    try {
+      const savedPlanner = localStorage.getItem(PLANNER_STORAGE_KEY);
+
+      if (!savedPlanner) {
+        return;
       }
 
-      return [...currentPlanner, id];
+      const parsedPlanner = JSON.parse(savedPlanner);
+
+      if (Array.isArray(parsedPlanner)) {
+        setPlanner(
+          parsedPlanner.map(Number).filter((id) => Number.isFinite(id)),
+        );
+      }
+    } catch (error) {
+      console.error("Could not load planner from localStorage:", error);
+    }
+  }, []);
+
+  //-------Save Planner To Local Storage-------
+  useEffect(() => {
+    try {
+      localStorage.setItem(PLANNER_STORAGE_KEY, JSON.stringify(planner));
+    } catch (error) {
+      console.error("Could not save planner to localStorage:", error);
+    }
+  }, [planner]);
+
+  //-------Add New Course-------
+  function addNewCourse(newCourse: any) {
+    setCourseList((previousCourses) => [...previousCourses, newCourse]);
+  }
+
+  //-------Add Course-------
+  function addCourse(id: number) {
+    setPlanner((previousPlanner) => {
+      if (previousPlanner.includes(id)) {
+        return previousPlanner;
+      }
+
+      return [...previousPlanner, id];
     });
-  };
+  }
 
   //-------Remove Course-------
-  const removeCourse = (id: number) => {
-    setPlanner((currentPlanner) =>
-      currentPlanner.filter((courseId) => courseId !== id),
+  function removeCourse(id: number) {
+    setPlanner((previousPlanner) =>
+      previousPlanner.filter((courseId) => courseId !== id),
     );
-  };
+  }
+
+  //-------Clear Planner On Logout-------
+  useEffect(() => {
+    if (!isLoggedIn) {
+      return;
+    }
+
+    console.log(`Planner loaded for user: ${user?.username}`);
+  }, [isLoggedIn, user]);
 
   //-------Return-------
   return (
-    <AuthProvider>
-      <BrowserRouter>
-        {/*-------Navbar-------*/}
-        <Navbar />
+    <BrowserRouter>
+      <Navbar />
 
-        {/*-------Routes-------*/}
-        <Routes>
-          {/*-------Home-------*/}
-          <Route
-            path="/"
-            element={<Home planner={planner} courses={courseList} />}
-          />
+      <Routes>
+        {/*-------Home-------*/}
+        <Route
+          path="/"
+          element={<Home planner={planner} courses={courseList} />}
+        />
 
-          {/*-------Catalog-------*/}
-          <Route
-            path="/catalog"
-            element={
-              <Catalog
+        {/*-------Catalog-------*/}
+        <Route
+          path="/catalog"
+          element={
+            <Catalog
+              courses={courseList}
+              planner={planner}
+              addCourse={addCourse}
+            />
+          }
+        />
+
+        {/*-------Protected Planner-------*/}
+        <Route
+          path="/planner"
+          element={
+            <ProtectedRoute>
+              <Planner
                 courses={courseList}
                 planner={planner}
-                addCourse={addCourse}
+                removeCourse={removeCourse}
               />
-            }
-          />
+            </ProtectedRoute>
+          }
+        />
 
-          {/*-------Protected Planner-------*/}
-          <Route
-            path="/planner"
-            element={
-              <ProtectedRoute>
-                <Planner
-                  courses={courseList}
-                  planner={planner}
-                  setPlanner={setPlanner}
-                  removeCourse={removeCourse}
-                />
-              </ProtectedRoute>
-            }
-          />
+        {/*-------Add Course-------*/}
+        <Route
+          path="/add-course"
+          element={
+            <AddCourse courses={courseList} addNewCourse={addNewCourse} />
+          }
+        />
 
-          {/*-------Add Course-------*/}
-          <Route
-            path="/add-course"
-            element={
-              <AddCourse courses={courseList} addNewCourse={addNewCourse} />
-            }
-          />
+        {/*-------Login-------*/}
+        <Route path="/login" element={<Login />} />
 
-          {/*-------Login-------*/}
-          <Route path="/login" element={<Login />} />
-
-          {/*-------Register-------*/}
-          <Route path="/register" element={<Register />} />
-        </Routes>
-      </BrowserRouter>
-    </AuthProvider>
+        {/*-------Register-------*/}
+        <Route path="/register" element={<Register />} />
+      </Routes>
+    </BrowserRouter>
   );
 }
 
-//-------Export-------
 export default App;
