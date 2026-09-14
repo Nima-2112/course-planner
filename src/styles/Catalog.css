@@ -1,0 +1,145 @@
+/*-------Catalog Page-------*/
+
+.catalog-page {
+  min-height: calc(100vh - 70px);
+  padding: 40px 20px;
+  background: #f4f6f8;
+}
+
+.catalog-container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/*-------Title-------*/
+
+.catalog-container h1 {
+  text-align: center;
+  margin-bottom: 10px;
+}
+
+.catalog-description {
+  text-align: center;
+  color: #666;
+  margin-bottom: 30px;
+}
+
+/*-------Catalog Grid-------*/
+
+.catalog-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+
+  gap: 20px;
+}
+
+/*-------Loading-------*/
+
+.loading-container {
+  min-height: 400px;
+
+  display: flex;
+  flex-direction: column;
+
+  justify-content: center;
+  align-items: center;
+
+  background: white;
+  border-radius: 12px;
+
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.06);
+}
+
+.loading-container p {
+  margin-top: 20px;
+  color: #555;
+}
+
+/*-------Loading Spinner-------*/
+
+.loading-spinner {
+  width: 45px;
+  height: 45px;
+
+  border: 5px solid #ddd;
+  border-top: 5px solid #222;
+
+  border-radius: 50%;
+
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/*-------Error Banner-------*/
+
+.error-banner {
+  background: #fff;
+  border-left: 5px solid #c62828;
+
+  padding: 30px;
+
+  border-radius: 10px;
+
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.06);
+
+  text-align: center;
+}
+
+.error-banner h2 {
+  color: #c62828;
+  margin-top: 0;
+}
+
+.error-banner p {
+  color: #555;
+}
+
+/*-------Empty Catalog-------*/
+
+.empty-catalog {
+  background: white;
+
+  min-height: 250px;
+
+  display: flex;
+  flex-direction: column;
+
+  justify-content: center;
+  align-items: center;
+
+  text-align: center;
+
+  border-radius: 12px;
+
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.06);
+}
+
+.empty-catalog h2 {
+  margin-bottom: 10px;
+}
+
+.empty-catalog p {
+  color: #666;
+}
+
+/*-------Responsive-------*/
+
+@media (max-width: 600px) {
+  .catalog-page {
+    padding: 25px 15px;
+  }
+
+  .catalog-grid {
+    grid-template-columns: 1fr;
+  }
+}

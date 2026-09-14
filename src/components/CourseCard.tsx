@@ -1,34 +1,46 @@
+//-------import-------
+
+import type { Course } from "../types";
+
 import "../styles/Card.css";
 
+//-------Props-------
+
 type Props = {
-  course: any;
-
+  course: Course;
   isAdded: boolean;
-
   addCourse: (id: number) => void;
 };
 
+//-------Component-------
+
 function CourseCard({ course, isAdded, addCourse }: Props) {
+  //-------Return-------
+
   return (
     <div className="course-card">
-      <h2>{course.title}</h2>
+      <div className="course-card-content">
+        <h2>{course.title}</h2>
 
-      <p>
-        <b>Code:</b> {course.code}
-      </p>
+        <p>
+          <strong>Code:</strong> {course.code}
+        </p>
 
-      <p>
-        <b>Department:</b> {course.department}
-      </p>
+        <p>
+          <strong>Department:</strong> {course.department}
+        </p>
 
-      <p>
-        <b>Credits:</b> {course.credits}
-      </p>
+        <p>
+          <strong>Credits:</strong> {course.credits}
+        </p>
+      </div>
 
-      <p>{course.description}</p>
-
-      <button disabled={isAdded} onClick={() => addCourse(course.id)}>
-        {isAdded ? "Added" : "Add to Planner"}
+      <button
+        type="button"
+        onClick={() => addCourse(course.id)}
+        disabled={isAdded}
+      >
+        {isAdded ? "Added" : "Add Course"}
       </button>
     </div>
   );

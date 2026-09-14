@@ -1,0 +1,46 @@
+{
+  "courses": [
+    {
+      "id": 1,
+      "title": "Introduction to Computer Science",
+      "code": "CS101",
+      "department": "Computer Science",
+      "credits": 3
+    },
+    {
+      "id": 2,
+      "title": "Data Structures",
+      "code": "CS201",
+      "department": "Computer Science",
+      "credits": 3
+    },
+    {
+      "id": 3,
+      "title": "Database Systems",
+      "code": "CS301",
+      "department": "Computer Science",
+      "credits": 3
+    },
+    {
+      "id": 4,
+      "title": "Calculus I",
+      "code": "MATH101",
+      "department": "Mathematics",
+      "credits": 4
+    },
+    {
+      "id": 5,
+      "title": "Linear Algebra",
+      "code": "MATH201",
+      "department": "Mathematics",
+      "credits": 3
+    },
+    {
+      "id": 6,
+      "title": "Physics I",
+      "code": "PHY101",
+      "department": "Physics",
+      "credits": 4
+    }
+  ]
+}

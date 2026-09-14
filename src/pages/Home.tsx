@@ -1,23 +1,42 @@
+//-------import-------
+
+import { Link } from "react-router-dom";
+
+import "../styles/Layout.css";
+
+//-------Props-------
+
 type Props = {
   planner: number[];
-  courses: any[];
 };
 
-function Home({ planner, courses }: Props) {
-  const totalCredits = courses
-    .filter((course) => planner.includes(course.id))
-    .reduce((sum, course) => sum + course.credits, 0);
+//-------Component-------
+
+function Home({ planner }: Props) {
+  //-------Return-------
 
   return (
-    <div className="page">
-      <h1>University Course Planner</h1>
+    <div className="home-page">
+      <div className="home-container">
+        <h1>University Course Planner</h1>
 
-      <div className="course-card">
-        <h2>Dashboard</h2>
+        <p>Plan your university courses and keep track of your credits.</p>
 
-        <p>Total Selected Courses: {planner.length}</p>
+        <div className="home-actions">
+          <Link to="/catalog" className="home-button">
+            Browse Courses
+          </Link>
 
-        <p>Total Credits: {totalCredits}</p>
+          <Link to="/planner" className="home-button">
+            My Planner
+          </Link>
+        </div>
+
+        <div className="home-summary">
+          <h2>Selected Courses</h2>
+
+          <p>{planner.length}</p>
+        </div>
       </div>
     </div>
   );
