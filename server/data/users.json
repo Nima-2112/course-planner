@@ -1,3 +1,29 @@
-{
-  "message": "Course Planner API is running."
-}
+[
+  {
+    "id": 1790166022342,
+    "username": "admin",
+    "passwordHash": "$2b$10$oqD5l9ydI1Khma3fDtzyKu3u07a/WLLWZB9Dn/MFHr3vSQungAVi.",
+    "planner": [
+      2,
+      1,
+      6,
+      5,
+      4,
+      8,
+      7,
+      3
+    ]
+  },
+  {
+    "id": 1790189762701,
+    "username": "aaaaaa",
+    "passwordHash": "$2b$10$99XYjqfOhlDs6p6o2G0W4.9AyhbzbgbNcjR3O/DqjXjA9Rw9P6mai",
+    "planner": []
+  },
+  {
+    "id": 1790579111992,
+    "username": "hhhhhh",
+    "passwordHash": "$2b$10$jk3.Pztr9e8wisN8A4P9b.IGCRrgssr9icD85t3MTtpgG1.KR5GO6",
+    "planner": []
+  }
+]

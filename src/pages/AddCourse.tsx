@@ -1,128 +1,243 @@
 //-------import-------
-import { useState } from "react";
-import "../styles/Layout.css";
+
+import { useState, type FormEvent } from "react";
+
+import { createCourse } from "../api/courseApi";
+
+import type { CreateCourseInput } from "../types";
+
+import ErrorState from "../components/ErrorState";
+
 import "../styles/AddCourse.css";
 
-//-------Props-------
-type Props = {
-  courses: any[];
-  addNewCourse: (course: any) => void;
-};
-
 //-------Component-------
-function AddCourse({ courses, addNewCourse }: Props) {
+
+function AddCourse() {
   //-------State-------
+
   const [code, setCode] = useState("");
+
   const [title, setTitle] = useState("");
+
   const [department, setDepartment] = useState("Computer Science");
+
   const [credits, setCredits] = useState(3);
 
-  //-------Handle Submit-------
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
+  const [description, setDescription] = useState("");
 
-    if (!code || !title) {
-      alert("Please fill in all fields.");
+  const [loading, setLoading] = useState(false);
+
+  const [success, setSuccess] = useState("");
+
+  const [error, setError] = useState("");
+
+  //-------Submit-------
+
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+
+    setSuccess("");
+    setError("");
+
+    //-------Normalize Values-------
+
+    const normalizedCode = code.trim().toUpperCase();
+
+    const normalizedTitle = title.trim();
+
+    const normalizedDepartment = department.trim();
+
+    const normalizedDescription = description.trim() || "University course.";
+
+    //-------Validation-------
+
+    if (!normalizedCode || !normalizedTitle) {
+      setError("Course code and title are required.");
+
       return;
     }
 
-    //-------Create New Course-------
-    const newCourse = {
-      id: Date.now(),
-      code,
-      title,
-      department,
-      credits,
-      description: "Custom course",
-    };
-    //-------Add Course-------
-    addNewCourse(newCourse);
+    if (!normalizedDepartment) {
+      setError("Department is required.");
 
-    //-------Reset Form-------
-    setCode("");
-    setTitle("");
-    setDepartment("Computer Science");
-    setCredits(3);
+      return;
+    }
 
-    //-------Success Message-------
-    alert("Course added successfully!");
-  };
+    if (!Number.isInteger(credits) || credits < 1 || credits > 6) {
+      setError("Credits must be between 1 and 6.");
 
-  //-------Return-------
+      return;
+    }
+
+    //-------Loading-------
+
+    setLoading(true);
+
+    //-------Create Course-------
+
+    try {
+      const newCourse: CreateCourseInput = {
+        code: normalizedCode,
+
+        title: normalizedTitle,
+
+        department: normalizedDepartment,
+
+        credits,
+
+        description: normalizedDescription,
+      };
+
+      await createCourse(newCourse);
+
+      //-------Reset Form-------
+
+      setCode("");
+
+      setTitle("");
+
+      setDepartment("Computer Science");
+
+      setCredits(3);
+
+      setDescription("");
+
+      //-------Success-------
+
+      setSuccess(
+        "Course added successfully. It is now available in the catalog.",
+      );
+    } catch (createError) {
+      setError(
+        createError instanceof Error
+          ? createError.message
+          : "Unable to add the course.",
+      );
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  //-------UI-------
+
   return (
-    <div className="add-course-page">
-      {/*-------Add Course Box-------*/}
+    <section className="add-course-page">
       <div className="add-course-box">
-        {/*-------Title-------*/}
-        <h1>Add New Course</h1>
-        {/*-------Form-------*/}
-        <form onSubmit={handleSubmit}>
-          {/*-------Course Code-------*/}
-          <div className="form-group">
-            <label htmlFor="course-code">Course Code</label>
+        {/*-------Heading-------*/}
 
-            <input
-              id="course-code"
-              type="text"
-              value={code}
-              onChange={(e) => setCode(e.target.value)}
-              placeholder="Enter course code"
-            />
+        <div className="add-course-heading">
+          <span className="eyebrow">CATALOG MANAGEMENT</span>
+
+          <h1>Add New Course</h1>
+
+          <p>Create a course and publish it directly to the catalog.</p>
+        </div>
+
+        {/*-------Error-------*/}
+
+        {error && <ErrorState title="Could not add course" message={error} />}
+
+        {/*-------Success-------*/}
+
+        {success && <div className="success-banner">✓ {success}</div>}
+
+        {/*-------Form-------*/}
+
+        <form onSubmit={handleSubmit}>
+          {/*-------Code and Credits-------*/}
+
+          <div className="form-grid">
+            <label>
+              Course code
+              <input
+                type="text"
+                value={code}
+                onChange={(event) => setCode(event.target.value)}
+                placeholder="CS401"
+                maxLength={12}
+                disabled={loading}
+                required
+              />
+            </label>
+
+            <label>
+              Credits
+              <input
+                type="number"
+                min={1}
+                max={6}
+                value={credits}
+                onChange={(event) => setCredits(Number(event.target.value))}
+                disabled={loading}
+                required
+              />
+            </label>
           </div>
 
-          {/*-------Course Title-------*/}
-          <div className="form-group">
-            <label htmlFor="course-title">Course Title</label>
+          {/*-------Title-------*/}
 
+          <label>
+            Course title
             <input
-              id="course-title"
               type="text"
               value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              placeholder="Enter course title"
+              onChange={(event) => setTitle(event.target.value)}
+              placeholder="Advanced Web Development"
+              disabled={loading}
+              required
             />
-          </div>
+          </label>
 
           {/*-------Department-------*/}
-          <div className="form-group">
-            <label htmlFor="department">Department</label>
 
+          <label>
+            Department
             <select
-              id="department"
               value={department}
-              onChange={(e) => setDepartment(e.target.value)}
+              onChange={(event) => setDepartment(event.target.value)}
+              disabled={loading}
             >
-              <option>Computer Science</option>
-              <option>Mathematics</option>
-              <option>History</option>
-              <option>Physics</option>
-              <option>Languages</option>
+              <option value="Computer Science">Computer Science</option>
+
+              <option value="Mathematics">Mathematics</option>
+
+              <option value="History">History</option>
+
+              <option value="Physics">Physics</option>
+
+              <option value="Languages">Languages</option>
+
+              <option value="Business">Business</option>
             </select>
-          </div>
+          </label>
 
-          {/*-------Credits-------*/}
-          <div className="form-group">
-            <label htmlFor="credits">Credits</label>
+          {/*-------Description-------*/}
 
-            <input
-              id="credits"
-              type="number"
-              min={1}
-              max={6}
-              value={credits}
-              onChange={(e) => setCredits(Number(e.target.value))}
+          <label>
+            Description
+            <textarea
+              value={description}
+              onChange={(event) => setDescription(event.target.value)}
+              placeholder="Briefly describe what students will learn..."
+              rows={4}
+              maxLength={240}
+              disabled={loading}
             />
-          </div>
+          </label>
 
           {/*-------Submit Button-------*/}
-          <button type="submit" className="add-course-button">
-            Add Course
+
+          <button
+            type="submit"
+            className="primary-button add-course-submit"
+            disabled={loading}
+          >
+            {loading ? "Publishing..." : "Publish course"}
           </button>
         </form>
       </div>
-    </div>
+    </section>
   );
 }
 
-//-------Export-------
 export default AddCourse;

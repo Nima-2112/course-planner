@@ -1,65 +1,168 @@
+/*-------Page-------*/
+
 .add-course-page {
   min-height: calc(100vh - 80px);
+
   display: flex;
+
   justify-content: center;
   align-items: center;
+
   padding: 40px 20px;
+
+  background: #f4f6f8;
 }
+
+/*-------Box-------*/
 
 .add-course-box {
   width: 100%;
   max-width: 550px;
+
   background: white;
+
   padding: 35px;
-  border-radius: 12px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+
+  border-radius: 14px;
+
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
 }
 
 .add-course-box h1 {
   text-align: center;
+
   color: #1e3a8a;
-  margin-bottom: 30px;
+
+  margin: 0 0 10px;
 }
+
+.add-course-description {
+  text-align: center;
+
+  color: #666;
+
+  margin: 0 0 30px;
+}
+
+/*-------Form-------*/
 
 .add-course-box form {
   display: flex;
   flex-direction: column;
 }
 
+.form-group {
+  display: flex;
+  flex-direction: column;
+}
+
 .add-course-box label {
   font-weight: 600;
+
   margin-bottom: 8px;
+
   color: #333;
 }
 
 .add-course-box input,
 .add-course-box select {
   width: 100%;
+
   box-sizing: border-box;
+
   padding: 11px 12px;
+
   margin-bottom: 20px;
+
   border: 1px solid #ccc;
-  border-radius: 6px;
+
+  border-radius: 7px;
+
   font-size: 15px;
 }
 
 .add-course-box input:focus,
 .add-course-box select:focus {
   outline: none;
+
   border-color: #2563eb;
+
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
 }
+
+.add-course-box input:disabled,
+.add-course-box select:disabled {
+  background: #f3f4f6;
+
+  cursor: not-allowed;
+}
+
+/*-------Button-------*/
 
 .add-course-box button {
   margin-top: 5px;
+
   padding: 12px;
+
   background: #2563eb;
+
   color: white;
+
   border: none;
-  border-radius: 6px;
+
+  border-radius: 7px;
+
   font-size: 16px;
+
   cursor: pointer;
 }
 
 .add-course-box button:hover {
   background: #1d4ed8;
+}
+
+.add-course-box button:disabled {
+  background: #94a3b8;
+
+  cursor: not-allowed;
+}
+
+/*-------Messages-------*/
+
+.form-message {
+  padding: 12px 14px;
+
+  border-radius: 8px;
+
+  margin-bottom: 18px;
+
+  font-size: 14px;
+}
+
+.form-message-error {
+  background: #ffebee;
+
+  color: #b71c1c;
+
+  border: 1px solid #ffcdd2;
+}
+
+.form-message-success {
+  background: #ecfdf5;
+
+  color: #047857;
+
+  border: 1px solid #a7f3d0;
+}
+
+/*-------Responsive-------*/
+
+@media (max-width: 600px) {
+  .add-course-page {
+    padding: 25px 15px;
+  }
+
+  .add-course-box {
+    padding: 25px 20px;
+  }
 }

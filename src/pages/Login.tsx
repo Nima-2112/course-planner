@@ -1,5 +1,7 @@
 //-------import-------
-import { FormEvent, useState } from "react";
+
+import { useState, type FormEvent } from "react";
+
 import { Link, useLocation, useNavigate } from "react-router-dom";
 
 import { useAuth } from "../context/AuthContext";
@@ -7,28 +9,45 @@ import { useAuth } from "../context/AuthContext";
 import "../styles/Login.css";
 
 //-------Component-------
+
 function Login() {
   //-------State-------
+
   const [username, setUsername] = useState("");
+
   const [password, setPassword] = useState("");
+
   const [error, setError] = useState("");
+
   const [loading, setLoading] = useState(false);
 
   //-------Hooks-------
+
   const { login } = useAuth();
 
   const navigate = useNavigate();
+
   const location = useLocation();
 
   //-------Login Handler-------
+
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
     setError("");
+
+    const normalizedUsername = username.trim();
+
+    if (!normalizedUsername || !password) {
+      setError("Username and password are required.");
+
+      return;
+    }
+
     setLoading(true);
 
     try {
-      await login(username, password);
+      await login(normalizedUsername, password);
 
       const destination = location.state?.from || "/planner";
 
@@ -41,6 +60,7 @@ function Login() {
   }
 
   //-------Return-------
+
   return (
     <div className="auth-page">
       <div className="auth-card">
@@ -60,6 +80,8 @@ function Login() {
             onChange={(event) => setUsername(event.target.value)}
             placeholder="Enter username"
             required
+            autoComplete="username"
+            disabled={loading}
           />
 
           <label htmlFor="password">Password</label>
@@ -71,9 +93,15 @@ function Login() {
             onChange={(event) => setPassword(event.target.value)}
             placeholder="Enter password"
             required
+            autoComplete="current-password"
+            disabled={loading}
           />
 
-          {error && <p className="auth-error">{error}</p>}
+          {error && (
+            <p className="auth-error" role="alert">
+              {error}
+            </p>
+          )}
 
           <button type="submit" disabled={loading}>
             {loading ? "Logging in..." : "Login"}

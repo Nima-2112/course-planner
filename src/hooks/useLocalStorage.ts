@@ -1,42 +1,46 @@
 //-------import-------
+
 import { useEffect, useState } from "react";
 
-//-------Types-------
-type SetValue<T> = T | ((previousValue: T) => T);
-
 //-------Hook-------
+
 function useLocalStorage<T>(
   key: string,
   initialValue: T,
 ): [T, React.Dispatch<React.SetStateAction<T>>] {
   //-------Initial State-------
+
   const [value, setValue] = useState<T>(() => {
     try {
-      const savedValue = localStorage.getItem(key);
+      const storedValue = localStorage.getItem(key);
 
-      if (savedValue === null) {
+      if (storedValue === null) {
         return initialValue;
       }
 
-      return JSON.parse(savedValue) as T;
+      return JSON.parse(storedValue) as T;
     } catch (error) {
-      console.error(`Error reading localStorage key "${key}":`, error);
+      console.error(`Failed to read localStorage key "${key}".`, error);
 
       return initialValue;
     }
   });
 
-  //-------Save To Local Storage-------
+  //-------Persistence-------
+
   useEffect(() => {
     try {
       localStorage.setItem(key, JSON.stringify(value));
     } catch (error) {
-      console.error(`Error saving localStorage key "${key}":`, error);
+      console.error(`Failed to save localStorage key "${key}".`, error);
     }
   }, [key, value]);
 
   //-------Return-------
+
   return [value, setValue];
 }
+
+//-------Export-------
 
 export default useLocalStorage;

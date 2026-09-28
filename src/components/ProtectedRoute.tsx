@@ -1,20 +1,27 @@
 //-------import-------
 import { Navigate, useLocation } from "react-router-dom";
 
+import type { ReactNode } from "react";
+
 import { useAuth } from "../context/AuthContext";
+
+import LoadingScreen from "./LoadingScreen";
 
 //-------Props-------
 type Props = {
-  children: React.ReactNode;
+  children: ReactNode;
 };
 
 //-------Component-------
 function ProtectedRoute({ children }: Props) {
-  //-------Hooks-------
-  const { isLoggedIn } = useAuth();
+  const { isLoggedIn, authLoading } = useAuth();
+
   const location = useLocation();
 
-  //-------Authentication Check-------
+  if (authLoading) {
+    return <LoadingScreen message="Checking your session..." />;
+  }
+
   if (!isLoggedIn) {
     return (
       <Navigate
@@ -27,7 +34,6 @@ function ProtectedRoute({ children }: Props) {
     );
   }
 
-  //-------Return-------
   return children;
 }
 

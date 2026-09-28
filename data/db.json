@@ -1,0 +1,79 @@
+{
+  "courses": [
+    {
+      "id": "1",
+      "title": "Introduction to Computer Science",
+      "code": "CS101",
+      "department": "Computer Science",
+      "credits": 3
+    },
+    {
+      "id": "2",
+      "title": "Data Structures",
+      "code": "CS201",
+      "department": "Computer Science",
+      "credits": 3
+    },
+    {
+      "id": "3",
+      "title": "Database Systems",
+      "code": "CS301",
+      "department": "Computer Science",
+      "credits": 3
+    },
+    {
+      "id": "4",
+      "title": "Calculus I",
+      "code": "MATH101",
+      "department": "Mathematics",
+      "credits": 4
+    },
+    {
+      "id": "5",
+      "title": "Linear Algebra",
+      "code": "MATH201",
+      "department": "Mathematics",
+      "credits": 3
+    },
+    {
+      "id": "6",
+      "title": "Physics I",
+      "code": "PHY101",
+      "department": "Physics",
+      "credits": 4
+    },
+    {
+      "code": "CS201",
+      "title": "Data Structures",
+      "department": "Computer Science",
+      "credits": 3,
+      "description": "University course.",
+      "id": "Gd0iBprk7d4"
+    },
+    {
+      "code": "CS301",
+      "title": "Database Systems",
+      "department": "Computer Science",
+      "credits": 3,
+      "description": "University course.",
+      "id": "cSsDIKCPq3Q"
+    },
+    {
+      "code": "CS201",
+      "title": "Computer Science",
+      "department": "Computer Science",
+      "credits": 3,
+      "description": "University course.",
+      "id": "d8F5qDdIbk4"
+    },
+    {
+      "code": "CS201",
+      "title": "Computer Science",
+      "department": "Computer Science",
+      "credits": 3,
+      "description": "University course.",
+      "id": "lQ3KG85-Vjg"
+    }
+  ],
+  "$schema": "./node_modules/json-server/schema.json"
+}

@@ -1,5 +1,5 @@
 //-------import-------
-import { Link, useNavigate } from "react-router-dom";
+import { Link, NavLink, useNavigate } from "react-router-dom";
 
 import { useAuth } from "../context/AuthContext";
 
@@ -7,52 +7,83 @@ import "../styles/Navbar.css";
 
 //-------Component-------
 function Navbar() {
-  //-------Authentication-------
   const { user, isLoggedIn, logout } = useAuth();
 
-  //-------Navigation-------
   const navigate = useNavigate();
 
-  //-------Logout Handler-------
+  //-------Logout-------
   function handleLogout() {
     logout();
 
-    navigate("/login");
+    navigate("/");
+  }
+
+  //-------Navigation Class-------
+  function getNavClass({ isActive }: { isActive: boolean }) {
+    return isActive ? "navbar-link active" : "navbar-link";
   }
 
   //-------Return-------
   return (
-    <nav className="navbar">
-      <div className="navbar-left">
+    <header className="navbar">
+      <div className="navbar-inner">
         <Link to="/" className="navbar-logo">
-          Course Planner
+          <span className="navbar-logo-mark">CP</span>
+
+          <span>Course Planner</span>
         </Link>
 
-        <Link to="/">Home</Link>
+        <nav className="navbar-links" aria-label="Main navigation">
+          <NavLink to="/" className={getNavClass} end>
+            Home
+          </NavLink>
 
-        <Link to="/catalog">Catalog</Link>
+          <NavLink to="/catalog" className={getNavClass}>
+            Course Catalog
+          </NavLink>
 
-        <Link to="/planner">My Planner</Link>
+          <NavLink to="/planner" className={getNavClass}>
+            My Planner
+          </NavLink>
 
-        <Link to="/add-course">Add Course</Link>
+          <NavLink to="/add-course" className={getNavClass}>
+            Add Course
+          </NavLink>
+        </nav>
+
+        <div className="navbar-account">
+          {isLoggedIn ? (
+            <>
+              <div className="navbar-user">
+                <span className="navbar-user-avatar">
+                  {user?.username.charAt(0).toUpperCase()}
+                </span>
+
+                <span>{user?.username}</span>
+              </div>
+
+              <button
+                type="button"
+                className="navbar-logout"
+                onClick={handleLogout}
+              >
+                Logout
+              </button>
+            </>
+          ) : (
+            <>
+              <Link to="/login" className="navbar-login">
+                Login
+              </Link>
+
+              <Link to="/register" className="navbar-register">
+                Create account
+              </Link>
+            </>
+          )}
+        </div>
       </div>
-
-      <div className="navbar-right">
-        {isLoggedIn ? (
-          <>
-            <span className="navbar-user">Welcome, {user?.username}</span>
-
-            <button className="navbar-button" onClick={handleLogout}>
-              Logout
-            </button>
-          </>
-        ) : (
-          <Link to="/login" className="navbar-login">
-            Login
-          </Link>
-        )}
-      </div>
-    </nav>
+    </header>
   );
 }
 

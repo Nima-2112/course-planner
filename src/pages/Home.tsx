@@ -2,17 +2,17 @@
 
 import { Link } from "react-router-dom";
 
+import { usePlanner } from "../context/PlannerContext";
+
 import "../styles/Layout.css";
-
-//-------Props-------
-
-type Props = {
-  planner: number[];
-};
 
 //-------Component-------
 
-function Home({ planner }: Props) {
+function Home() {
+  //-------Global State-------
+
+  const { planner, totalCredits } = usePlanner();
+
   //-------Return-------
 
   return (
@@ -31,15 +31,21 @@ function Home({ planner }: Props) {
             My Planner
           </Link>
         </div>
-
         <div className="home-summary">
-          <h2>Selected Courses</h2>
+          <div>
+            <span>Selected Courses</span>
 
-          <p>{planner.length}</p>
+            <strong>{planner.length}</strong>
+          </div>
+
+          <div>
+            <span>Total Credits</span>
+
+            <strong>{totalCredits}</strong>
+          </div>
         </div>
       </div>
     </div>
   );
 }
-
 export default Home;

@@ -1,82 +1,52 @@
 //-------import-------
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 import CourseCard from "../components/CourseCard";
 
-import type { Course } from "../types";
+import { usePlanner } from "../context/PlannerContext";
+
+import useCourseSearch from "../hooks/useCourseSearch";
 
 import "../styles/Catalog.css";
 
-//-------Props-------
-
-type Props = {
-  planner: number[];
-  addCourse: (id: number) => void;
-};
-
 //-------Component-------
 
-function Catalog({ planner, addCourse }: Props) {
-  //-------State-------
+function Catalog() {
+  //-------Global State-------
 
-  const [courses, setCourses] = useState<Course[]>([]);
+  const {
+    courses,
+    loading,
+    error,
+    planner,
+    addCourse,
+    isCourseInPlanner,
+    retryFetchCourses,
+  } = usePlanner();
 
-  const [loading, setLoading] = useState(true);
+  //-------Search State-------
 
-  const [error, setError] = useState("");
+  const [searchTerm, setSearchTerm] = useState("");
 
-  //-------Fetch Courses-------
+  const [department, setDepartment] = useState("All");
 
-  useEffect(() => {
-    let isMounted = true;
+  //-------Search Hook-------
 
-    async function fetchCourses() {
-      try {
-        setLoading(true);
-        setError("");
+  const { filteredCourses, departments } = useCourseSearch(
+    courses,
+    searchTerm,
+    department,
+  );
 
-        const response = await fetch("http://localhost:3001/courses");
-
-        if (!response.ok) {
-          throw new Error(`Request failed with status ${response.status}`);
-        }
-
-        const data = (await response.json()) as Course[];
-
-        if (isMounted) {
-          setCourses(data);
-        }
-      } catch (error) {
-        if (isMounted) {
-          setError(
-            error instanceof Error ? error.message : "Failed to load courses.",
-          );
-        }
-      } finally {
-        if (isMounted) {
-          setLoading(false);
-        }
-      }
-    }
-
-    fetchCourses();
-
-    //-------Cleanup-------
-
-    return () => {
-      isMounted = false;
-    };
-  }, []);
-
-  //-------Loading UI-------
+  //-------Loading-------
 
   if (loading) {
     return (
       <div className="catalog-page">
         <div className="catalog-container">
-          <div className="loading-container">
-            <div className="loading-spinner"></div>
+          <div className="loading-container" role="status" aria-live="polite">
+            <div className="loading-spinner" aria-hidden="true" />
 
             <p>Loading courses...</p>
           </div>
@@ -85,18 +55,27 @@ function Catalog({ planner, addCourse }: Props) {
     );
   }
 
-  //-------Error UI-------
+  //-------Error-------
 
   if (error) {
     return (
       <div className="catalog-page">
         <div className="catalog-container">
-          <div className="error-banner">
+          <div className="error-banner" role="alert">
             <h2>Unable to load courses</h2>
 
             <p>{error}</p>
 
             <p>Please make sure JSON Server is running.</p>
+
+            <button
+              type="button"
+              onClick={() => {
+                void retryFetchCourses();
+              }}
+            >
+              Try Again
+            </button>
           </div>
         </div>
       </div>
@@ -108,25 +87,73 @@ function Catalog({ planner, addCourse }: Props) {
   return (
     <div className="catalog-page">
       <div className="catalog-container">
-        <h1>Course Catalog</h1>
+        <div className="catalog-header">
+          <h1>Course Catalog</h1>
 
-        <p className="catalog-description">
-          Browse available university courses and add them to your planner.
-        </p>
+          <p className="catalog-description">
+            Browse available university courses and add them to your planner.
+          </p>
+        </div>
 
-        {courses.length === 0 ? (
+        {/*-------Search Controls-------*/}
+
+        <div className="catalog-filters">
+          <div className="search-field">
+            <label htmlFor="course-search">Search courses</label>
+
+            <input
+              id="course-search"
+              type="search"
+              value={searchTerm}
+              onChange={(event) => setSearchTerm(event.target.value)}
+              placeholder="Search by title or course code..."
+            />
+          </div>
+
+          <div className="department-field">
+            <label htmlFor="department-filter">Department</label>
+
+            <select
+              id="department-filter"
+              value={department}
+              onChange={(event) => setDepartment(event.target.value)}
+            >
+              <option value="All">All Departments</option>
+
+              {departments.map((item) => (
+                <option key={item} value={item}>
+                  {item}
+                </option>
+              ))}
+            </select>
+          </div>
+        </div>
+
+        {/*-------Results Summary-------*/}
+
+        <div className="catalog-result-summary">
+          <span>
+            Showing {filteredCourses.length} of {courses.length} courses
+          </span>
+
+          <span>Planner: {planner.length}</span>
+        </div>
+
+        {/*-------Empty-------*/}
+
+        {filteredCourses.length === 0 ? (
           <div className="empty-catalog">
-            <h2>No courses available</h2>
+            <h2>No courses found</h2>
 
-            <p>There are currently no courses in the catalog.</p>
+            <p>Try changing the search term or department filter.</p>
           </div>
         ) : (
           <div className="catalog-grid">
-            {courses.map((course) => (
+            {filteredCourses.map((course) => (
               <CourseCard
                 key={course.id}
                 course={course}
-                isAdded={planner.includes(course.id)}
+                isAdded={isCourseInPlanner(course.id)}
                 addCourse={addCourse}
               />
             ))}

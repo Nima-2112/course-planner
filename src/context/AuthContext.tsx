@@ -7,22 +7,28 @@ import {
   type ReactNode,
 } from "react";
 
-//-------Types-------
-type User = {
-  id: number;
-  username: string;
-};
+import { getCurrentUser, loginUser, registerUser } from "../api/authApi";
 
+import type { User } from "../types";
+
+//-------Types-------
 type AuthContextType = {
   user: User | null;
+  token: string | null;
   isLoggedIn: boolean;
+  authLoading: boolean;
+
   login: (username: string, password: string) => Promise<void>;
+
   register: (username: string, password: string) => Promise<void>;
+
   logout: () => void;
 };
 
 //-------Constants-------
-const AUTH_STORAGE_KEY = "coursePlannerAuth";
+const TOKEN_STORAGE_KEY = "coursePlannerToken";
+
+const USER_STORAGE_KEY = "coursePlannerUser";
 
 //-------Context-------
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -30,89 +36,98 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 //-------Provider-------
 function AuthProvider({ children }: { children: ReactNode }) {
   //-------State-------
+  const [token, setToken] = useState<string | null>(() =>
+    localStorage.getItem(TOKEN_STORAGE_KEY),
+  );
+
   const [user, setUser] = useState<User | null>(() => {
     try {
-      const savedAuth = localStorage.getItem(AUTH_STORAGE_KEY);
+      const savedUser = localStorage.getItem(USER_STORAGE_KEY);
 
-      if (!savedAuth) {
-        return null;
-      }
-
-      const parsed = JSON.parse(savedAuth);
-
-      return parsed.user || null;
+      return savedUser ? (JSON.parse(savedUser) as User) : null;
     } catch {
       return null;
     }
   });
 
-  //-------Save Authentication-------
+  const [authLoading, setAuthLoading] = useState(Boolean(token));
+
+  //-------Restore Session-------
   useEffect(() => {
-    if (user) {
-      localStorage.setItem(
-        AUTH_STORAGE_KEY,
-        JSON.stringify({
-          user,
-        }),
-      );
-    } else {
-      localStorage.removeItem(AUTH_STORAGE_KEY);
+    let active = true;
+
+    async function restoreSession() {
+      if (!token) {
+        if (active) {
+          setUser(null);
+          setAuthLoading(false);
+        }
+
+        return;
+      }
+
+      try {
+        const currentUser = await getCurrentUser(token);
+
+        if (active) {
+          setUser(currentUser);
+
+          localStorage.setItem(USER_STORAGE_KEY, JSON.stringify(currentUser));
+        }
+      } catch {
+        if (active) {
+          localStorage.removeItem(TOKEN_STORAGE_KEY);
+
+          localStorage.removeItem(USER_STORAGE_KEY);
+
+          setToken(null);
+          setUser(null);
+        }
+      } finally {
+        if (active) {
+          setAuthLoading(false);
+        }
+      }
     }
-  }, [user]);
+
+    void restoreSession();
+
+    return () => {
+      active = false;
+    };
+  }, [token]);
 
   //-------Login-------
   async function login(username: string, password: string) {
-    const response = await fetch("/api/auth/login", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        username,
-        password,
-      }),
-    });
+    const result = await loginUser(username.trim(), password);
 
-    const data = await response.json();
+    localStorage.setItem(TOKEN_STORAGE_KEY, result.token);
 
-    if (!response.ok) {
-      throw new Error(data.message || "Login failed.");
-    }
+    localStorage.setItem(USER_STORAGE_KEY, JSON.stringify(result.user));
 
-    localStorage.setItem("coursePlannerToken", data.token);
-
-    setUser(data.user);
+    setUser(result.user);
+    setToken(result.token);
   }
 
   //-------Register-------
   async function register(username: string, password: string) {
-    const response = await fetch("/api/auth/register", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        username,
-        password,
-      }),
-    });
+    const result = await registerUser(username.trim(), password);
 
-    const data = await response.json();
+    localStorage.setItem(TOKEN_STORAGE_KEY, result.token);
 
-    if (!response.ok) {
-      throw new Error(data.message || "Registration failed.");
-    }
+    localStorage.setItem(USER_STORAGE_KEY, JSON.stringify(result.user));
 
-    localStorage.setItem("coursePlannerToken", data.token);
-
-    setUser(data.user);
+    setUser(result.user);
+    setToken(result.token);
   }
 
   //-------Logout-------
   function logout() {
-    localStorage.removeItem("coursePlannerToken");
-    localStorage.removeItem("coursePlannerAuth");
+    localStorage.removeItem(TOKEN_STORAGE_KEY);
 
+    localStorage.removeItem(USER_STORAGE_KEY);
+
+    setToken(null);
     setUser(null);
   }
 
@@ -121,9 +136,17 @@ function AuthProvider({ children }: { children: ReactNode }) {
     <AuthContext.Provider
       value={{
         user,
-        isLoggedIn: Boolean(user),
+
+        token,
+
+        isLoggedIn: Boolean(user && token),
+
+        authLoading,
+
         login,
+
         register,
+
         logout,
       }}
     >

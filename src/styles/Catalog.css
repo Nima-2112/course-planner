@@ -12,17 +12,87 @@
   margin: 0 auto;
 }
 
-/*-------Title-------*/
+/*-------Header-------*/
 
-.catalog-container h1 {
+.catalog-header {
   text-align: center;
-  margin-bottom: 10px;
+  margin-bottom: 30px;
+}
+
+.catalog-header h1 {
+  margin: 0 0 10px;
 }
 
 .catalog-description {
-  text-align: center;
+  margin: 0;
   color: #666;
-  margin-bottom: 30px;
+}
+
+/*-------Filters-------*/
+
+.catalog-filters {
+  display: grid;
+  grid-template-columns: minmax(0, 2fr) minmax(220px, 1fr);
+  gap: 20px;
+
+  padding: 20px;
+
+  margin-bottom: 20px;
+
+  background: white;
+
+  border-radius: 12px;
+
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.06);
+}
+
+.search-field,
+.department-field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.search-field label,
+.department-field label {
+  font-weight: 600;
+  color: #333;
+}
+
+.search-field input,
+.department-field select {
+  width: 100%;
+  box-sizing: border-box;
+
+  padding: 12px 14px;
+
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+
+  font-size: 15px;
+
+  background: white;
+}
+
+.search-field input:focus,
+.department-field select:focus {
+  outline: none;
+  border-color: #2563eb;
+
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+/*-------Result Summary-------*/
+
+.catalog-result-summary {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  margin-bottom: 20px;
+
+  color: #666;
+  font-size: 14px;
 }
 
 /*-------Catalog Grid-------*/
@@ -46,6 +116,7 @@
   align-items: center;
 
   background: white;
+
   border-radius: 12px;
 
   box-shadow: 0 5px 20px rgba(0, 0, 0, 0.06);
@@ -56,14 +127,14 @@
   color: #555;
 }
 
-/*-------Loading Spinner-------*/
+/*-------Spinner-------*/
 
 .loading-spinner {
   width: 45px;
   height: 45px;
 
   border: 5px solid #ddd;
-  border-top: 5px solid #222;
+  border-top-color: #222;
 
   border-radius: 50%;
 
@@ -80,13 +151,14 @@
   }
 }
 
-/*-------Error Banner-------*/
+/*-------Error-------*/
 
 .error-banner {
-  background: #fff;
-  border-left: 5px solid #c62828;
+  background: white;
 
   padding: 30px;
+
+  border-left: 5px solid #c62828;
 
   border-radius: 10px;
 
@@ -104,7 +176,21 @@
   color: #555;
 }
 
-/*-------Empty Catalog-------*/
+.error-banner button {
+  margin-top: 10px;
+
+  padding: 11px 18px;
+
+  border: none;
+  border-radius: 8px;
+
+  background: #222;
+  color: white;
+
+  cursor: pointer;
+}
+
+/*-------Empty-------*/
 
 .empty-catalog {
   background: white;
@@ -134,9 +220,19 @@
 
 /*-------Responsive-------*/
 
-@media (max-width: 600px) {
+@media (max-width: 700px) {
   .catalog-page {
     padding: 25px 15px;
+  }
+
+  .catalog-filters {
+    grid-template-columns: 1fr;
+  }
+
+  .catalog-result-summary {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
   }
 
   .catalog-grid {

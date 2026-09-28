@@ -1,84 +1,24 @@
 //-------import-------
 
-import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 
-import type { Course } from "../types";
+import { usePlanner } from "../context/PlannerContext";
 
 import "../styles/MyPlanner.css";
 
-//-------Props-------
-
-type Props = {
-  planner: number[];
-  removeCourse: (id: number) => void;
-};
-
 //-------Component-------
 
-function Planner({ planner, removeCourse }: Props) {
-  //-------State-------
+function Planner() {
+  //-------Global State-------
 
-  const [courses, setCourses] = useState<Course[]>([]);
-
-  const [loading, setLoading] = useState(true);
-
-  const [error, setError] = useState("");
-
-  //-------Fetch Courses-------
-
-  useEffect(() => {
-    let isMounted = true;
-
-    async function fetchCourses() {
-      try {
-        setLoading(true);
-        setError("");
-
-        const response = await fetch("http://localhost:3001/courses");
-
-        if (!response.ok) {
-          throw new Error(`Request failed with status ${response.status}`);
-        }
-
-        const data = (await response.json()) as Course[];
-
-        if (isMounted) {
-          setCourses(data);
-        }
-      } catch (error) {
-        if (isMounted) {
-          setError(
-            error instanceof Error ? error.message : "Failed to load courses.",
-          );
-        }
-      } finally {
-        if (isMounted) {
-          setLoading(false);
-        }
-      }
-    }
-
-    fetchCourses();
-
-    //-------Cleanup-------
-
-    return () => {
-      isMounted = false;
-    };
-  }, []);
-
-  //-------Selected Courses-------
-
-  const selectedCourses = courses.filter((course) =>
-    planner.includes(course.id),
-  );
-
-  //-------Total Credits-------
-
-  const totalCredits = selectedCourses.reduce(
-    (sum, course) => sum + course.credits,
-    0,
-  );
+  const {
+    selectedCourses,
+    totalCredits,
+    removeCourse,
+    loading,
+    error,
+    retryFetchCourses,
+  } = usePlanner();
 
   //-------Loading-------
 
@@ -87,7 +27,7 @@ function Planner({ planner, removeCourse }: Props) {
       <div className="planner-page">
         <div className="planner-container">
           <div className="loading-container">
-            <div className="loading-spinner"></div>
+            <div className="loading-spinner" aria-hidden="true" />
 
             <p>Loading planner...</p>
           </div>
@@ -102,10 +42,19 @@ function Planner({ planner, removeCourse }: Props) {
     return (
       <div className="planner-page">
         <div className="planner-container">
-          <div className="error-banner">
+          <div className="error-banner" role="alert">
             <h2>Unable to load planner</h2>
 
             <p>{error}</p>
+
+            <button
+              type="button"
+              onClick={() => {
+                void retryFetchCourses();
+              }}
+            >
+              Try Again
+            </button>
           </div>
         </div>
       </div>
@@ -130,29 +79,33 @@ function Planner({ planner, removeCourse }: Props) {
             <h2>No courses selected.</h2>
 
             <p>Go to the Catalog and add courses to your planner.</p>
+
+            <Link to="/catalog" className="planner-catalog-link">
+              Browse Course Catalog
+            </Link>
           </div>
         ) : (
           <div className="planner-grid">
             {selectedCourses.map((course) => (
-              <div key={course.id} className="course-card">
+              <article key={course.id} className="course-card">
                 <h2>{course.title}</h2>
 
                 <p>
-                  <b>Code:</b> {course.code}
+                  <strong>Code:</strong> {course.code}
                 </p>
 
                 <p>
-                  <b>Department:</b> {course.department}
+                  <strong>Department:</strong> {course.department}
                 </p>
 
                 <p>
-                  <b>Credits:</b> {course.credits}
+                  <strong>Credits:</strong> {course.credits}
                 </p>
 
                 <button type="button" onClick={() => removeCourse(course.id)}>
                   Remove
                 </button>
-              </div>
+              </article>
             ))}
           </div>
         )}

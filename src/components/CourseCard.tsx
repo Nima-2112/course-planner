@@ -1,5 +1,7 @@
 //-------import-------
 
+import { memo } from "react";
+
 import type { Course } from "../types";
 
 import "../styles/Card.css";
@@ -15,10 +17,8 @@ type Props = {
 //-------Component-------
 
 function CourseCard({ course, isAdded, addCourse }: Props) {
-  //-------Return-------
-
   return (
-    <div className="course-card">
+    <article className="course-card">
       <div className="course-card-content">
         <h2>{course.title}</h2>
 
@@ -42,8 +42,10 @@ function CourseCard({ course, isAdded, addCourse }: Props) {
       >
         {isAdded ? "Added" : "Add Course"}
       </button>
-    </div>
+    </article>
   );
 }
 
-export default CourseCard;
+//-------Memo Export-------
+
+export default memo(CourseCard);
