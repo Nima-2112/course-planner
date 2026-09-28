@@ -1,7 +1,5 @@
 //-------import-------
 
-import { Link } from "react-router-dom";
-
 import { usePlanner } from "../context/PlannerContext";
 
 import "../styles/Layout.css";
@@ -11,41 +9,56 @@ import "../styles/Layout.css";
 function Home() {
   //-------Global State-------
 
-  const { planner, totalCredits } = usePlanner();
+  const { courses, selectedCourses, totalCredits } = usePlanner();
 
-  //-------Return-------
+  //-------UI-------
 
   return (
-    <div className="home-page">
-      <div className="home-container">
-        <h1>University Course Planner</h1>
+    <main className="home-page">
+      <section className="home-container">
+        <div className="home-box">
+          {/*-------Badge-------*/}
 
-        <p>Plan your university courses and keep track of your credits.</p>
+          <span className="home-badge">UNIVERSITY COURSE PLANNER</span>
 
-        <div className="home-actions">
-          <Link to="/catalog" className="home-button">
-            Browse Courses
-          </Link>
+          {/*-------Heading-------*/}
 
-          <Link to="/planner" className="home-button">
-            My Planner
-          </Link>
-        </div>
-        <div className="home-summary">
-          <div>
-            <span>Selected Courses</span>
+          <h1>Plan Your University Courses</h1>
 
-            <strong>{planner.length}</strong>
+          <p className="home-description">
+            Search available courses, build your semester planner, and keep
+            track of your selected credits in one place.
+          </p>
+
+          {/*-------Actions-------*/}
+
+          <div className="home-actions"></div>
+
+          {/*-------Statistics-------*/}
+
+          <div className="home-stats">
+            <div className="home-stat">
+              <strong>{courses.length}</strong>
+
+              <span>Available Courses</span>
+            </div>
+
+            <div className="home-stat">
+              <strong>{selectedCourses.length}</strong>
+
+              <span>Selected Courses</span>
+            </div>
+
+            <div className="home-stat">
+              <strong>{totalCredits}</strong>
+
+              <span>Total Credits</span>
+            </div>
           </div>
-
-          <div>
-            <span>Total Credits</span>
-
-            <strong>{totalCredits}</strong>
-          </div>
         </div>
-      </div>
-    </div>
+      </section>
+    </main>
   );
 }
+
 export default Home;

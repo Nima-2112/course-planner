@@ -3,16 +3,7 @@
     "id": 1790166022342,
     "username": "admin",
     "passwordHash": "$2b$10$oqD5l9ydI1Khma3fDtzyKu3u07a/WLLWZB9Dn/MFHr3vSQungAVi.",
-    "planner": [
-      2,
-      1,
-      6,
-      5,
-      4,
-      8,
-      7,
-      3
-    ]
+    "planner": [2, 1, 6, 5, 4, 8, 7, 3]
   },
   {
     "id": 1790189762701,
@@ -24,6 +15,12 @@
     "id": 1790579111992,
     "username": "hhhhhh",
     "passwordHash": "$2b$10$jk3.Pztr9e8wisN8A4P9b.IGCRrgssr9icD85t3MTtpgG1.KR5GO6",
+    "planner": []
+  },
+  {
+    "id": 1790590245770,
+    "username": "iiiiii",
+    "passwordHash": "$2b$10$DGmELrut6vkJg0eSJOzHt.npIB5w0VEXuqJ4ODUE0i5H83NVPP/Fa",
     "planner": []
   }
 ]
